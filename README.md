@@ -27,7 +27,7 @@ If you want to use external gluu server, You can not do this step.
 
 or
 
-[Download oxD-server-2.4.3.DEMO](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.3-SNAPSHOT/oxd-server-2.4.3-SNAPSHOT-distribution.zip).
+[Download oxD-server-2.4.3.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.3.Final/oxd-server-2.4.3.Final-distribution.zip).
 
 ## Step 3. Unzip and run oXD-server
  
