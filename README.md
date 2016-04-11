@@ -65,10 +65,7 @@ For example if you are using gluu-server-2.4.2 it is necessary to use oxD-server
 3. Click on ```Install``` button. 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d4.png) 
 
-4. Click on ```Install``` button. 
-![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d4.png) 
-
-5. Open menu tab Gluu SSO 2.4.v 
+4. Open menu tab Gluu SSO 2.4.v 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d5.png) 
 
 ## Step 6. General

@@ -348,7 +348,6 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
             <li id="social-login-setup"><a data-method="#sociallogin">SuiteCRM Configuration</a></li>
             <li id="help_trouble"><a data-method="#helptrouble">Help & Troubleshooting</a></li>
         </ul>
-
         <div class="container-page">
             <!-- General -->
             <?php if (!$oxd_id) { ?>
