@@ -899,7 +899,7 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                 <p>You can look all scopes in your gluu server / OpenID Connect / Scopes and understand the meaning of  every scope.
                     Scopes are need for getting loged in users information from gluu server.
                     Pay attention to that, which scopes you are using that are switched on in your gluu server.</p>
-                <p>In SuiteCRM-gluu-sso 2.4.3  you can only enable, disable and delete scope.
+                <p>In SuiteCRM-gluu-sso 2.4.3  you can add, enable, disable and delete scope.
                     <img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png" alt="Scopes1"></p>
                 <h3><a id="Custom_scripts_104"></a>Custom scripts.</h3>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d10.png" alt="Customscripts"></p>
