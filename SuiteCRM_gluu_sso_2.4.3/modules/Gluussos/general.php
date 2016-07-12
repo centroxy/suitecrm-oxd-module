@@ -5,7 +5,6 @@ $base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] 
 $db = DBManagerFactory::getInstance();
 
 $query = "CREATE TABLE IF NOT EXISTS `gluu_table` (
-
   `gluu_action` varchar(255) NOT NULL,
   `gluu_value` longtext NOT NULL,
   UNIQUE(`gluu_action`)
@@ -69,10 +68,9 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'i
     $iconCustomColor = '#0000FF';
     $db->query("INSERT INTO gluu_table (gluu_action, gluu_value) VALUES ('iconCustomColor','$iconCustomColor')");
 }
-$get_scopes =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'scopes'"))["gluu_value"],true);
-$oxd_config =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
-$custom_scripts = json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'custom_scripts'"))["gluu_value"],true);
-
+$get_scopes =                 json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'scopes'"))["gluu_value"],true);
+$oxd_config =                 json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
+$custom_scripts =             json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'custom_scripts'"))["gluu_value"],true);
 $iconSpace =                  $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconSpace'"))["gluu_value"];
 $iconCustomSize =             $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomSize'"))["gluu_value"];
 $iconCustomWidth =            $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomWidth'"))["gluu_value"];
@@ -80,7 +78,6 @@ $iconCustomHeight =           $db->fetchRow($db->query("SELECT `gluu_value` FROM
 $loginCustomTheme =           $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'loginCustomTheme'"))["gluu_value"];
 $loginTheme =                 $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'loginTheme'"))["gluu_value"];
 $iconCustomColor =            $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomColor'"))["gluu_value"];
-
 
 if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'")){
     $oxd_id = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'"))["gluu_value"];
@@ -327,7 +324,6 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
     }
 </script>
 <div class="heading"><h3>GLUU SSO 2.4.3 </h3></div>
-
 <div class="mo2f_container">
     <div class="container">
         <div id="messages">

@@ -4,8 +4,8 @@ SuiteCRM GLUU SSO module
 
 SuiteCRM-GLUU-SSO module gives access for login to your SuiteCRM site, with the help of GLUU server.
 
-There are already 2 versions of SUITECRM-GLUU-SSO (2.4.2 and 2.4.3) modules, each in its turn is working with oxD and GLUU servers.
-For example if you are using SUITECRM-gluu-sso-2.4.2 module, you need to connect with oxD-server-2.4.2.
+There are already 3 versions of SUITECRM-GLUU-SSO (2.4.2, 2.4.3 and 2.4.4) modules, each in its turn is working with oxD and GLUU servers.
+For example if you are using SUITECRM-gluu-sso-2.4.4 module, you need to connect with oxD-server-2.4.4.
 
 Now I want to explain in details how to use module step by step. 
 
@@ -13,7 +13,7 @@ Module will not be working if your host does not have https://.
 
 ## Step 1. Install Gluu-server 
 
-(version 2.4.2 or 2.4.3)
+(version 2.4.2, 2.4.3 or 2.4.4)
 
 If you want to use external gluu server, You can not do this step.   
 
@@ -21,7 +21,7 @@ If you want to use external gluu server, You can not do this step.
 
 ## Step 2. Download oxD-server 
 
-(version 2.4.2 or 2.4.3)
+(version 2.4.2, 2.4.3 or 2.4.4)
 
 [Download oxD-server-2.4.2.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.2.Final/oxd-server-2.4.2.Final-distribution.zip).
 
@@ -29,13 +29,17 @@ or
 
 [Download oxD-server-2.4.3.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.3.Final/oxd-server-2.4.3.Final-distribution.zip).
 
+or
+
+[Download oxD-server-2.4.4.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.4.Final/oxd-server-2.4.4.Final-distribution.zip).
+
 ## Step 3. Unzip and run oXD-server
  
 1. Unzip your oxD-server. 
 2. Open the command line and navigate to the extracted folder in the conf directory.
 3. Open oxd-conf.json file.  
 4. If your server is using 8099 port, please change "port" number to free port, which is not used.
-5. Set parameter "op_host":"Your gluu-server-url (internal or external)"
+5. Set parameter "op_host":"Your gluu-server-url (internal or external)" (in version 2.4.4 it removed)
 6. Open the command line and navigate to the extracted folder in the bin directory.
 7. For Linux environment, run sh oxd-start.sh&. 
 8. For Windows environment, run oxd-start.bat.
@@ -43,7 +47,7 @@ or
 
 ## Step 4. Download SuiteCRM-gluu-sso module
  
-(version 2.4.2 or 2.4.3)
+(version 2.4.2, 2.4.3 or 2.4.4)
 
 [Download SuiteCRM-gluu-sso-2.4.2 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.2/SuiteCRM_gluu_sso_2.4.2.zip).
 
@@ -51,7 +55,11 @@ or
 
 [Download SuiteCRM-gluu-sso-2.4.3 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.3/SuiteCRM_gluu_sso_2.4.3.zip).
 
-For example if you are using gluu-server-2.4.2 it is necessary to use oxD-server-2.4.2 and SuiteCRM-gluu-sso-2.4.2-module
+or
+
+[Download SuiteCRM-gluu-sso-2.4.4 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.4/SuiteCRM_gluu_sso_2.4.4.zip).
+
+For example if you are using gluu-server-2.4.4 it is necessary to use oxD-server-2.4.4 and SuiteCRM-gluu-sso-2.4.4-module
 
 ## Step 5. Install module
  
@@ -70,11 +78,16 @@ For example if you are using gluu-server-2.4.2 it is necessary to use oxD-server
 
 ## Step 6. General
 
+In SuiteCRM-gluu-sso 2.4.2 and 2.4.3-2.4.4  you do not need add Gluu server URL.
 ![General](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png)  
 
+In SuiteCRM-gluu-sso 2.4.4  you do not need add Gluu server URL.
+![Scopes1](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/15.png) 
+
 1. Admin Email: please add your or admin email address for registrating site in Gluu server.
-2. Port number: choose that port which is using oxd-server (see in oxd-server/conf/oxd-conf.json file).
-3. Click ```Next``` to continue.
+2. Gluu Server URL: please add your Gluu server URL.
+3. Oxd port in your server: choose that port which is using oxd-server (see in oxd-server/conf/oxd-conf.json file).
+4. Click next to continue.
 
 If You are successfully registered in gluu server, you will see bottom page.
 
@@ -86,7 +99,7 @@ If you want to reset configurations click on Reset configurations button.
 
 ## Step 8. OpenID Connect Configuration
 
-OpenID Connect Configuration page for SuiteCRM-gluu-sso 2.4.2 and SuiteCRM-gluu-sso 2.4.3 are different.
+OpenID Connect Configuration page for SuiteCRM-gluu-sso 2.4.2 and SuiteCRM-gluu-sso 2.4.3-2.4.4 are different.
 
 ### Scopes.
 You can look all scopes in your gluu server / OpenID Connect / Scopes and understand the meaning of  every scope.
@@ -96,7 +109,7 @@ Pay attention to that, which scopes you are using that are switched on in your g
 In SuiteCRM-gluu-sso 2.4.2  you can only enable, disable and delete scope.
 ![Scopes1](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d8.png) 
 
-In SuiteCRM-gluu-sso 2.4.3 you can not only enable, disable and delete scope, but also add new scope, but when you add new scope by {any name}, necessary to add that scope in your gluu server too. 
+In SuiteCRM-gluu-sso 2.4.3-2.4.4 you can not only enable, disable and delete scope, but also add new scope, but when you add new scope by {any name}, necessary to add that scope in your gluu server too. 
 ![Scopes2](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
 
 ### Custom scripts.
