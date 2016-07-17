@@ -59,8 +59,6 @@ if(isset($_REQUEST['app_name'])){
 	$get_authorization_url->request();
 
 	if($get_authorization_url->getResponseAuthorizationUrl()){
-		global  $sugar_config;
-		$sugar_config['http_referer']['list'][] = 'php-test.gluu.org';
 		header( "Location: ". $get_authorization_url->getResponseAuthorizationUrl() );
 		exit;
 	}else{

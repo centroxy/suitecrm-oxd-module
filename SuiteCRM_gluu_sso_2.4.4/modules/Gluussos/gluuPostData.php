@@ -7,7 +7,17 @@ $app = new SugarApplication();
 $app->startSession();
 $base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
 $db = DBManagerFactory::getInstance();
+function remove_http($url) {
+    $disallowed = array('http://', 'https://');
+    foreach($disallowed as $d) {
+        if(strpos($url, $d) === 0) {
+            return str_replace($d, '', $url);
+        }
+    }
+    return $url;
+}
 if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_register_page' ) !== false ) {
+    $sugar_config['http_referer']['list'][] = remove_http($_POST['gluu_server_url']);
     $config_option = json_encode(array(
         "op_host" => $_POST['gluu_server_url'],
         "oxd_host_ip" => '127.0.0.1',

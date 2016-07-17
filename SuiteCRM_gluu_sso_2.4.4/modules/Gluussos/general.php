@@ -481,9 +481,15 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                                                         <?php if ($scop == 'openid'){?>
                                                             <input <?php if (!$oxd_id) echo ' disabled ' ?> type="hidden"  name="scope[]"  <?php if ($oxd_config && in_array($scop, $oxd_config['scope'])) {
                                                                 echo " checked "; } ?> value="<?php echo $scop; ?>" />
+                                                        <?php }  else if ($scop == 'uma_protection'){?>
+                                                            <input <?php if (!$oxd_id) echo ' disabled ' ?> type="hidden"  name="scope[]"  <?php if ($oxd_config && in_array($scop, $oxd_config['scope'])) {
+                                                                echo " checked "; } ?> value="<?php echo $scop; ?>" />
+                                                        <?php }  else if ($scop == 'uma_authorization'){?>
+                                                            <input <?php if (!$oxd_id) echo ' disabled ' ?> type="hidden"  name="scope[]"  <?php if ($oxd_config && in_array($scop, $oxd_config['scope'])) {
+                                                                echo " checked "; } ?> value="<?php echo $scop; ?>" />
                                                         <?php } ?>
                                                         <input <?php if (!$oxd_id) echo ' disabled ' ?> type="checkbox"  name="scope[]"  <?php if ($oxd_config && in_array($scop, $oxd_config['scope'])) {
-                                                            echo " checked "; } ?> id="<?php echo $scop; ?>" value="<?php echo $scop; ?>" <?php if ($scop == 'openid') echo ' disabled '; ?> />
+                                                            echo " checked "; } ?> id="<?php echo $scop; ?>" value="<?php echo $scop; ?>" <?php if ($scop == 'openid' || $scop == 'uma_protection' || $scop == 'uma_authorization') echo ' disabled '; ?> />
                                                         <label for="<?php echo $scop; ?>"><?php echo $scop; ?></label>
                                                     </td>
                                                 <?php endforeach; ?>
@@ -516,6 +522,16 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                                                                    value="<?php echo $scop; ?>"
                                                                    name="value_scope"/>
                                                             <?php if ($scop != 'openid'){ ?>
+                                                                <input  style="width: 100px; background-color: red !important; cursor: pointer"
+                                                                        type="submit"
+                                                                        class="button button-primary " <?php if (!$oxd_id) echo 'disabled' ?>
+                                                                        value="Delete" name="delete_scop"/>
+                                                            <?php } elseif ($scop != 'uma_protection'){ ?>
+                                                                <input  style="width: 100px; background-color: red !important; cursor: pointer"
+                                                                        type="submit"
+                                                                        class="button button-primary " <?php if (!$oxd_id) echo 'disabled' ?>
+                                                                        value="Delete" name="delete_scop"/>
+                                                            <?php } else if ($scop != 'uma_authorization'){ ?>
                                                                 <input  style="width: 100px; background-color: red !important; cursor: pointer"
                                                                         type="submit"
                                                                         class="button button-primary " <?php if (!$oxd_id) echo 'disabled' ?>
