@@ -1,68 +1,27 @@
-SuiteCRM OpenID Connect Single Sign-On (SSO) Module by Gluu  
-=========================
+[TOC]
+
+# SuiteCRM  OpenID Connect Single Sign-On (SSO) Module by Gluu
+
 ![image](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/plugin.jpg)
 
-OpenID Connect Single Sign-On (SSO) Module by Gluu gives access for login to your SuiteCRM site, with the help of GLUU server.
+Gluu's SuiteCRM OpenID Connect Single Sign On (SSO) Module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).  
 
-There are already 3 versions of OpenID Connect Single Sign-On (SSO) Module by Gluu (2.4.2, 2.4.3 and 2.4.4) modules, each in its turn is working with oxd and Gluu servers.
-For example if you are using OpenID Connect Single Sign-On (SSO) Module by Gluu version 2.4.4 , you need to connect with oxd-server-2.4.4.
+## Requirements
+In order to use the SuiteCRM Module, you will need to have deployed a standard OP like the Gluu Server and the oxd Server.
 
-Now I want to explain in details how to use module step by step. 
+* [Gluu Server Installation Guide](https://www.gluu.org/docs/deployment/).
 
-Module will not be working if your host does not have https://. 
+* [oxd Server Installation Guide](https://oxd.gluu.org/docs/oxdserver/install/)
 
-## Step 1. Install Gluu-server 
 
-(version 2.4.2, 2.4.3 or 2.4.4)
+## Installation
 
-If you want to use external gluu server, You can not do this step.   
+### Step 1. Download
 
-[Gluu-server installation gide](https://www.gluu.org/docs/deployment/).
+[Github source](https://github.com/GluuFederation/gluu-sso-SuiteCRM-module/raw/master/SuiteCRM_gluu_sso_2.4.4/SuiteCRM_gluu_sso_2.4.4.zip)
 
-## Step 2. Download oxd-server 
+### Step 2. Install module
 
-(version 2.4.2, 2.4.3 or 2.4.4)
-
-[Download oxd-server-2.4.2.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.2.Final/oxd-server-2.4.2.Final-distribution.zip).
-
-or
-
-[Download oxd-server-2.4.3.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.3.Final/oxd-server-2.4.3.Final-distribution.zip).
-
-or
-
-[Download oxd-server-2.4.4.Final](https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.4.Final/oxd-server-2.4.4.Final-distribution.zip).
-
-## Step 3. Unzip and run oxd-server
- 
-1. Unzip your oxD-server. 
-2. Open the command line and navigate to the extracted folder in the conf directory.
-3. Open oxd-conf.json file.  
-4. If your server is using 8099 port, please change "port" number to free port, which is not used.
-5. Set parameter "op_host":"Your gluu-server-url (internal or external)" (in version 2.4.4 it removed)
-6. Open the command line and navigate to the extracted folder in the bin directory.
-7. For Linux environment, run sh oxd-start.sh&. 
-8. For Windows environment, run oxd-start.bat.
-9. After the server starts, go to Step 4.
-
-## Step 4. Download OpenID Connect Single Sign-On (SSO) Module by Gluu
- 
-(version 2.4.2, 2.4.3 or 2.4.4)
-
-[Download SuiteCRM-gluu-sso-2.4.2 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.2/SuiteCRM_gluu_sso_2.4.2.zip).
-
-or
-
-[Download SuiteCRM-gluu-sso-2.4.3 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.3/SuiteCRM_gluu_sso_2.4.3.zip).
-
-or
-
-[Download SuiteCRM-gluu-sso-2.4.4 module](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/SuiteCRM_gluu_sso_2.4.4/SuiteCRM_gluu_sso_2.4.4.zip).
-
-For example if you are using gluu-server-2.4.4 it is necessary to use oxd-server-2.4.4 and OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.4
-
-## Step 5. Install module
- 
 1. Open menu tab Admin and click on ```Module loader``` button
 ![Manager](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/1.png) 
 ![Manager](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/2.png) 
@@ -73,16 +32,12 @@ For example if you are using gluu-server-2.4.4 it is necessary to use oxd-server
 3. Click on ```Install``` button. 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d4.png) 
 
-4. Open menu tab Gluu SSO 2.4.v 
+4. Open menu tab OpenID Connect Single Sign-On (SSO) Module by Gluu 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d5.png) 
 
-## Step 6. General
+### Step 3. General
 
-In OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.2 and 2.4.3-2.4.4  you do not need add Gluu server URL.
 ![General](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png)  
-
-In OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.4  you do not need add Gluu server URL.
-![Scopes1](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/15.png) 
 
 1. Admin Email: please add your or admin email address for registrating site in Gluu server.
 2. Gluu Server URL: please add your Gluu server URL.
@@ -91,49 +46,37 @@ In OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.4  you do not need add
 
 If You are successfully registered in gluu server, you will see bottom page.
 
-![oxD_id](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)
+![Oxd_id](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)
 
-For making sure go to your gluu server / OpenID Connect / Clients and search for your oxd ID
+To make sure everything is configured properly, login to your Gluu Server and navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
 
-If you want to reset configurations click on Reset configurations button.
+### Step 4. OpenID Connect Provider (OP) Configuration
 
-## Step 8. OpenID Connect Configuration
+#### Scopes.
+Scopes are groups of user attributes that are sent from your OP (in this case, the Gluu Server) to the application during login and enrollment. You can view all available scopes in your Gluu Server by navigating to the OpenID Connect > Scopes intefrace. 
 
-OpenID Connect Configuration page for OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.2 and OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.3-2.4.4 are different.
-
-### Scopes.
-You can look all scopes in your gluu server / OpenID Connect / Scopes and understand the meaning of  every scope.
-Scopes are need for getting loged in users information from gluu server.
-Pay attention to that, which scopes you are using that are switched on in your gluu server.
-
-In OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.2  you can only enable, disable and delete scope.
-![Scopes1](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d8.png) 
-
-In OpenID Connect Single Sign-On (SSO) Module by Gluu 2.4.3-2.4.4 you can not only enable, disable and delete scope, but also add new scope, but when you add new scope by {any name}, necessary to add that scope in your gluu server too. 
+In the Module interface you can enable, disable and delete scopes. You can also add new scopes. If/when you add new scopes via the module, be sure to also add the same scopes in your gluu server. 
 ![Scopes2](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
 
-### Custom scripts.
-
+#### Authentication.
+To specify the desired authentication mechanism navigate to the Configuration > Manage Custom Scripts menu in your Gluu Server. From there you can enable one of the out-of-the-box authentication mechanisms, such as password, U2F device (like yubikey), or mobile authentication. You can learn more about the Gluu Server authentication capabilities in the [docs](https://gluu.org/docs/multi-factor/intro/).
 ![Customscripts](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d10.png)  
 
-You can look all custom scripts in your gluu server / Configuration / Manage Custom Scripts / and enable login type, which type you want.
-Custom Script represent itself the type of login, at this moment gluu server supports (U2F, Duo, Google +, Basic) types.
+Note:    
+- The authentication mechanism specified in your SuiteCRM module page must match the authentication mechanism specified in your Gluu Server.     
+- After saving the authentication mechanism in your Gluu Server, it will be displayed in the SuiteCRM Module configuration page too.      
+- If / when you create a new custom script, both fields are required. 
 
-### Pay attention to that.
+### Step 5. SuiteCRM Configuration
 
-1. Which custom script you enable in your SuiteCRM site in order it must be switched on in gluu server too.
-2. Which custom script you will be enable in OpenID Connect Configuration page, after saving that will be showed in SuiteCRM Configuration page too.
-3. When you create new custom script, both fields are required.
-
-## Step 9. SuiteCRM Configuration
-
-### Customize Login Icons
+#### Customize Login Icons
  
-Pay attention to that, if custom scripts are not enabled, nothing will be showed.
-Customize shape, space between icons and size of the login icons.
+If custom scripts are not enabled, nothing will be showed. Customize shape, space between icons and size of the login icons.
 
 ![SuiteCRMConfiguration](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d11.png)  
 
-## Step 10. Show icons in frontend
+### Step 6. Show icons in frontend
+
+Once you've configured all the options, you should see your supported authentication mechanisms on your default SuiteCRM login page like the screenshot below
 
 ![frontend](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d12.png) 
