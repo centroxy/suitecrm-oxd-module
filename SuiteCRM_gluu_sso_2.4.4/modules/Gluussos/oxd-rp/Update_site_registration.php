@@ -73,10 +73,6 @@ class Update_site_registration extends Client_OXD_RP
      */
     private $request_application_type = null;
     /**
-     * @var array $request_redirect_uris                    Site redirect uris after login or logout
-     */
-    private $request_redirect_uris = null;
-    /**
      * @var array $request_acr_values                       Gluu login acr type, can be basic, duo, u2f, gplus and etc.
      */
     private $request_acr_values = null;
@@ -302,22 +298,7 @@ class Update_site_registration extends Client_OXD_RP
         $this->request_authorization_redirect_uri = $request_authorization_redirect_uri;
     }
 
-    /**
-     * @return array
-     */
-    public function getRequestRedirectUris()
-    {
-        return $this->request_redirect_uris;
-    }
 
-    /**
-     * @param array $request_redirect_uris
-     * @return void
-     */
-    public function setRequestRedirectUris($request_redirect_uris)
-    {
-        $this->request_redirect_uris = $request_redirect_uris;
-    }
 
     /**
      * @return array
@@ -406,7 +387,6 @@ class Update_site_registration extends Client_OXD_RP
             "oxd_id" => $this->getRequestOxdId(),
             "post_logout_redirect_uri" => $this->getRequestLogoutRedirectUri(),
             "application_type" => $this->getRequestApplicationType(),
-            "redirect_uris" => $this->getRequestRedirectUris(),
             "acr_values" => $this->getRequestAcrValues(),
             "scope" => $this->getRequestScope(),
             "client_jwks_uri" => $this->getRequestClientJwksUri(),

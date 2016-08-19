@@ -43,7 +43,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 global $mod_strings, $app_strings, $sugar_config, $module_menu, $global_control_links;
-$mod_strings['GLUU_GENERAL'] = 'Gluu SSO 2.4.4';
+$mod_strings['GLUU_GENERAL'] = 'OpenID Connect SSO by Gluu';
 $mod_strings['GLUU_SCOPES_AND_SCRIPTS'] = 'OpenID Connect Configuration';
 $mod_strings['GLUU_SUGAR_CONFIG'] = 'SugarCRM Configuration for Gluu';
 $mod_strings['GLUU_HELP'] = 'Help & Troubleshooting';

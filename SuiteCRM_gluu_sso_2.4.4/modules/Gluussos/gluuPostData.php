@@ -25,11 +25,10 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
         "admin_email" => $_POST['loginemail'],
         "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
         "logout_redirect_uri" => $base_url.'/gluu_logout.php?gluu_login=Gluussos',
-        "scope" => ["openid","uma_protection","uma_authorization","profile","email","address","clientinfo","mobile_phone","phone"],
+        "scope" => ["openid","profile","email","address","clientinfo","mobile_phone","phone"],
         "grant_types" =>["authorization_code"],
         "response_types" => ["code"],
         "application_type" => "web",
-        "redirect_uris" => [ $base_url.'/gluu.php?gluu_login=Gluussos'],
         "acr_values" => [],
     ));
     $db->query("UPDATE `gluu_table` SET `gluu_value` = '$config_option' WHERE `gluu_action` LIKE 'oxd_config';");
@@ -40,18 +39,16 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
         "admin_email" => $_POST['loginemail'],
         "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
         "logout_redirect_uri" => $base_url.'/gluu_logout.php?gluu_login=Gluussos',
-        "scope" => ["openid","uma_protection","uma_authorization","profile","email","address","clientinfo","mobile_phone","phone"],
+        "scope" => ["openid","profile","email","address","clientinfo","mobile_phone","phone"],
         "grant_types" =>["authorization_code"],
         "response_types" => ["code"],
         "application_type" => "web",
-        "redirect_uris" => [ $base_url.'/gluu.php?gluu_login=Gluussos' ],
         "acr_values" => [],
     );
     $register_site = new Register_site();
     $register_site->setRequestOpHost($config_option['op_host']);
     $register_site->setRequestAcrValues($config_option['acr_values']);
     $register_site->setRequestAuthorizationRedirectUri($config_option['authorization_redirect_uri']);
-    $register_site->setRequestRedirectUris($config_option['redirect_uris']);
     $register_site->setRequestGrantTypes($config_option['grant_types']);
     $register_site->setRequestResponseTypes(['code']);
     $register_site->setRequestLogoutRedirectUri($config_option['logout_redirect_uri']);
@@ -143,7 +140,6 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
     $update_site_registration->setRequestOxdId($oxd_id);
     $update_site_registration->setRequestAcrValues($config_option['acr_values']);
     $update_site_registration->setRequestAuthorizationRedirectUri($config_option['authorization_redirect_uri']);
-    $update_site_registration->setRequestRedirectUris($config_option['redirect_uris']);
     $update_site_registration->setRequestGrantTypes($config_option['grant_types']);
     $update_site_registration->setRequestResponseTypes(['code']);
     $update_site_registration->setRequestLogoutRedirectUri($config_option['logout_redirect_uri']);
