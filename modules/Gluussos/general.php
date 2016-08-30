@@ -20,12 +20,14 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'c
         array('name'=>'Google','image'=>'modules/Gluussos/GluuOxd_Openid/images/icons/google.png','value'=>'gplus'),
         array('name'=>'Basic','image'=>'modules/Gluussos/GluuOxd_Openid/images/icons/basic.png','value'=>'basic'),
         array('name'=>'Duo','image'=>'modules/Gluussos/GluuOxd_Openid/images/icons/duo.png','value'=>'duo'),
+        array('name'=>'OxPush2','image'=>'modules/Gluussos/GluuOxd_Openid/images/icons/oxpush2.png','value'=>'oxpush2'),
         array('name'=>'U2F token','image'=>'modules/Gluussos/GluuOxd_Openid/images/icons/u2f.png','value'=>'u2f')
     ));
     $result = $db->query("INSERT INTO gluu_table (gluu_action, gluu_value) VALUES ('custom_scripts','$custom_scripts')");
 }
 if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'")){
     $oxd_config = json_encode(array(
+        "op_host"=> '',
         "oxd_host_ip" => '127.0.0.1',
         "oxd_host_port" =>8099,
         "admin_email" => $GLOBALS['current_user']->email1,
@@ -35,7 +37,6 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
         "grant_types" =>["authorization_code"],
         "response_types" => ["code"],
         "application_type" => "web",
-        "redirect_uris" => [ $base_url.'/gluu.php?gluu_login=Gluussos' ],
         "acr_values" => [],
     ));
     $result = $db->query("INSERT INTO gluu_table (gluu_action, gluu_value) VALUES ('oxd_config','$oxd_config')");
@@ -323,7 +324,7 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
             gluuOxLoginPreview(document.getElementById('gluuox_login_icon_size').value, setLoginTheme(), setLoginCustomTheme(), document.getElementById('gluuox_login_icon_custom_color').value, document.getElementById('gluuox_login_icon_space').value);
     }
 </script>
-<div class="heading"><h3>GLUU SSO 2.4.3 </h3></div>
+<div class="heading"><h3>OpenID Connect SSO by Gluu </h3></div>
 <div class="mo2f_container">
     <div class="container">
         <div id="messages">
@@ -376,7 +377,7 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                                         <li>Open the command line and navigate to the extracted folder in the <b>bin</b> directory.</li>
                                         <li>For Linux environment, run <b>sh oxd-start.sh &amp;</b></li>
                                         <li>For Windows environment, run <b>oxd-start.bat</b></li>
-                                        <li>After the server starts, set the port number and your email in this page and click Next.</li>
+                                        <li>After the server starts, set the port number, your Gluu server url and your email in this page and click Next.</li>
                                     </ol>
                                 </div>
                                 <hr>
@@ -388,6 +389,14 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                                                        autofocus="true" required placeholder="person@example.com"
                                                        style="width:400px;"
                                                        value="<?php echo $oxd_config['admin_email']; ?>"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b><font color="#FF0000">*</font>Gluu Server URL:</b></td>
+                                            <td><input class="" type="url" name="gluu_server_url" id="gluu_server_url"
+                                                       autofocus="true" required placeholder="Enter Gluu Server URL."
+                                                       style="width:400px;"
+                                                       value=""/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -510,7 +519,7 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                                                                         type="submit"
                                                                         class="button button-primary " <?php if (!$oxd_id) echo 'disabled' ?>
                                                                         value="Delete" name="delete_scop"/>
-                                                            <?php } ?>
+                                                            <?php }  ?>
                                                         </form>
                                                     </td>
                                                 </tr>
@@ -721,8 +730,8 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                             <span style="margin-left:111px;">
                                     <input
                                         style="width:50px" <?php if (!$oxd_id) echo ' disabled '; ?>
-                                           onkeyup="gluuOxLoginSpaceValidate(this)" id="gluuox_login_icon_space"
-                                           name="gluuox_login_icon_space" type="text" value="<?php echo $iconSpace; ?>" />
+                                        onkeyup="gluuOxLoginSpaceValidate(this)" id="gluuox_login_icon_space"
+                                        name="gluuox_login_icon_space" type="text" value="<?php echo $iconSpace; ?>" />
                                     <input
                                         id="gluuox_login_space_plus" <?php if (!$oxd_id) echo 'disabled'; ?> <?php if (!$oxd_id) echo 'disabled'; ?> <?php if (!$oxd_id) echo 'disabled'; ?>
                                         type="button" value="+"
@@ -773,7 +782,7 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
                             <input id="gluuox_login_height_plus" <?php if (!$oxd_id) echo 'disabled'; ?> type="button" value="+"
                                    onmouseup="document.getElementById('gluuox_login_icon_height').value=parseInt(document.getElementById('gluuox_login_icon_height').value)+1;gluuOxLoginPreview(document.getElementById('gluuox_login_icon_width').value,setLoginTheme(),setLoginCustomTheme(),document.getElementById('gluuox_login_icon_custom_color').value,document.getElementById('gluuox_login_icon_space').value,document.getElementById('gluuox_login_icon_height').value)">
                             <input id="gluuox_login_height_minus" <?php if (!$oxd_id) echo 'disabled'; ?> type="button" value="-"
-                               onmouseup="document.getElementById('gluuox_login_icon_height').value=parseInt(document.getElementById('gluuox_login_icon_height').value)-1;gluuOxLoginPreview(document.getElementById('gluuox_login_icon_width').value,setLoginTheme(),setLoginCustomTheme(),document.getElementById('gluuox_login_icon_custom_color').value,document.getElementById('gluuox_login_icon_space').value,document.getElementById('gluuox_login_icon_height').value)">
+                                   onmouseup="document.getElementById('gluuox_login_icon_height').value=parseInt(document.getElementById('gluuox_login_icon_height').value)-1;gluuOxLoginPreview(document.getElementById('gluuox_login_icon_width').value,setLoginTheme(),setLoginCustomTheme(),document.getElementById('gluuox_login_icon_custom_color').value,document.getElementById('gluuox_login_icon_space').value,document.getElementById('gluuox_login_icon_height').value)">
                         </span>
                                 </td>
                             </tr>
@@ -853,66 +862,46 @@ if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'o
             <!-- Help & Troubleshooting tab-->
             <div class="page" id="helptrouble">
 
-                <h1><a id="SuiteCRM_GLUU_SSO_module_0"></a>SuiteCRM GLUU SSO module</h1>
+                <h1><a id="SuiteCRM_GLUU_SSO_module_0"></a>SuiteCRM OpenID Connect Single Sign-On (SSO) Module by Gluu</h1>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/plugin.jpg" alt="image"></p>
-                <p>SuiteCRM-GLUU-SSO module gives access for login to your SuiteCRM site, with the help of GLUU server.</p>
-                <p>There are already 2 versions of SUITECRM-GLUU-SSO (2.4.2 and 2.4.3) modules, each in its turn is working with oxD and GLUU servers.
-                    For example if you are using SUITECRM-gluu-sso-2.4.3 module, you need to connect with oxD-server-2.4.3.</p>
-                <p>Now I want to explain in details how to use module step by step.</p>
-                <p>Module will not be working if your host does not have https://.</p>
-                <h2><a id="Step_1_Install_Gluuserver_13"></a>Step 1. Install Gluu-server</h2>
-                <p>(version 2.4.2 or 2.4.3)</p>
-                <p>If you want to use external gluu server, You can not do this step.</p>
+                <p>Gluu's SuiteCRM OpenID Connect Single Sign On (SSO) Module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).</p>
+
+                <h2><a id="Step_1_Install_Gluuserver_13"></a>Step 1. Install</h2>
+                <p>In order to use the SuiteCRM Module, you will need to have deployed a standard OP like the Gluu Server and the oxd Server.</p>
                 <p><a target="_blank" href="https://www.gluu.org/docs/deployment/">Gluu-server installation gide</a>.</p>
-                <h2><a id="Step_2_Download_oxDserver_21"></a>Step 2. Download oxD-server</h2>
-                <p><a target="_blank" href="https://ox.gluu.org/maven/org/xdi/oxd-server/2.4.3.Final/oxd-server-2.4.3.Final-distribution.zip">Download oxD-server-2.4.3.Final</a>.</p>
-                <h2><a id="Step_3_Unzip_and_run_oXDserver_31"></a>Step 3. Unzip and run oXD-server</h2>
-                <ol>
-                    <li>Unzip your oxD-server.</li>
-                    <li>Open the command line and navigate to the extracted folder in the conf directory.</li>
-                    <li>Open oxd-conf.json file.</li>
-                    <li>If your server is using 8099 port, please change “port” number to free port, which is not used.</li>
-                    <li>Set parameter “op_host”:“Your gluu-server-url (internal or external)”</li>
-                    <li>Open the command line and navigate to the extracted folder in the bin directory.</li>
-                    <li>For Linux environment, run sh <a href="http://oxd-start.sh">oxd-start.sh</a>&amp;.</li>
-                    <li>For Windows environment, run oxd-start.bat.</li>
-                    <li>After the server starts, go to Step 4.</li>
-                </ol>
+                <p><a target="_blank" href="https://oxd.gluu.org/docs/oxdserver/install/">oxd server installation gide</a>.</p>
                 <h2><a id="Step_6_General_73"></a>Step 4. General</h2>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png" alt="General"></p>
                 <ol>
                     <li>Admin Email: please add your or admin email address for registrating site in Gluu server.</li>
+                    <li>Gluu Server URL: please enter Gluu Server URL.</li>
                     <li>Port number: choose that port which is using oxd-server (see in oxd-server/conf/oxd-conf.json file).</li>
                     <li>Click <code>Next</code> to continue.</li>
                 </ol>
                 <p>If You are successfully registered in gluu server, you will see bottom page.</p>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png" alt="oxD_id"></p>
-                <p>For making sure go to your gluu server / OpenID Connect / Clients and search for your oxD ID</p>
-                <p>If you want to reset configurations click on Reset configurations button.</p>
+                <p>To make sure everything is configured properly, login to your Gluu Server and navigate to the OpenID Connect > Clients page. Search for your `oxd id`.</p>
                 <h2><a id="Step_8_OpenID_Connect_Configuration_89"></a>Step 5. OpenID Connect Configuration</h2>
-                <p>OpenID Connect Configuration page for SuiteCRM-gluu-sso 2.4.3.</p>
                 <h3><a id="Scopes_93"></a>Scopes.</h3>
-                <p>You can look all scopes in your gluu server / OpenID Connect / Scopes and understand the meaning of  every scope.
-                    Scopes are need for getting loged in users information from gluu server.
-                    Pay attention to that, which scopes you are using that are switched on in your gluu server.</p>
-                <p>In SuiteCRM-gluu-sso 2.4.3  you can add, enable, disable and delete scope.
-                    <img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png" alt="Scopes1"></p>
+                <p>Scopes are groups of user attributes that are sent from your OP (in this case, the Gluu Server) to the application during login and enrollment. You can view all available scopes in your Gluu Server by navigating to the OpenID Connect > Scopes intefrace..</p>
+                <p>In the Module interface you can enable, disable and delete scopes. You can also add new scopes. If/when you add new scopes via the module, be sure to also add the same scopes in your gluu server.
+                    <img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d8.png" alt="Scopes1"></p>
                 <h3><a id="Custom_scripts_104"></a>Custom scripts.</h3>
+                <p>To specify the desired authentication mechanism navigate to the Configuration > Manage Custom Scripts menu in your Gluu Server. From there you can enable one of the out-of-the-box authentication mechanisms, such as password, U2F device (like yubikey), or mobile authentication. You can learn more about the Gluu Server authentication capabilities in the [docs](https://gluu.org/docs/multi-factor/intro/).</p>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d10.png" alt="Customscripts"></p>
-                <p>You can look all custom scripts in your gluu server / Configuration / Manage Custom Scripts / and enable login type, which type you want.
-                    Custom Script represent itself the type of login, at this moment gluu server supports (U2F, Duo, Google +, Basic) types.</p>
-                <h3><a id="Pay_attention_to_that_111"></a>Pay attention to that.</h3>
+
+                <h3><a id="Pay_attention_to_that_111"></a>Note:</h3>
                 <ol>
-                    <li>Which custom script you enable in your SuiteCRM site in order it must be switched on in gluu server too.</li>
-                    <li>Which custom script you will be enable in OpenID Connect Configuration page, after saving that will be showed in SuiteCRM Configuration page too.</li>
-                    <li>When you create new custom script, both fields are required.</li>
+                    <li>- The authentication mechanism specified in your SuiteCRM module page must match the authentication mechanism specified in your Gluu Server.</li>
+                    <li>- After saving the authentication mechanism in your Gluu Server, it will be displayed in the SuiteCRM Module configuration page too.</li>
+                    <li>- If / when you create a new custom script, both fields are required.</li>
                 </ol>
                 <h2><a id="Step_9_SuiteCRM_Configuration_117"></a>Step 6. SuiteCRM Configuration</h2>
                 <h3><a id="Customize_Login_Icons_119"></a>Customize Login Icons</h3>
-                <p>Pay attention to that, if custom scripts are not enabled, nothing will be showed.
-                    Customize shape, space between icons and size of the login icons.</p>
+                <p>If custom scripts are not enabled, nothing will be showed. Customize shape, space between icons and size of the login icons.</p>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d11.png" alt="SuiteCRMConfiguration"></p>
                 <h2><a id="Step_10_Show_icons_in_frontend_126"></a>Step 7. Show icons in frontend</h2>
+                <h3><a id="Customize_Login_Icons_121"></a>Once you've configured all the options, you should see your supported authentication mechanisms on your default SuiteCRM login page like the screenshot below</h3>
                 <p><img src="https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d12.png" alt="frontend"></p>
 
             </div>

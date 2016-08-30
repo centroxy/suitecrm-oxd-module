@@ -121,28 +121,29 @@ include_once('modules/Users/authentication/AuthenticationController.php');
 $login = new AuthenticationController();
 
 if($login->login($reg_email, $get_user_info_array->sub, $PARAMS = array())){
-        $login->login($reg_email, $get_user_info_array->sub, $PARAMS = array());
-        header("Location: index.php?action=index&module=Home");
+    $login->login($reg_email, $get_user_info_array->sub, $PARAMS = array());
+    header("Location: index.php?action=index&module=Home");
 }else{
-        $user = new User();
-        $user->user_name = $reg_email;
-        $user->employee_status = 'Active';
-        $user->status = 'Active';
-        $user->user_hash = $user_hash;
-        $user->last_name = $reg_last_name;
-        $user->first_name = $reg_first_name;
-        $user->is_admin = 0;
-        $user->	phone_home = $reg_home_phone_number;
-        $user->	phone_mobile = $reg_phone_mobile_number;
-        $user->	address_street = $address_object->street_address;
-        $user->	address_city = $address_object->region;
-        $user->	address_country = $address_object->country;
-        $user->	address_postalcode = $address_object->postal_code;
-        $user->external_auth_only = 0;
-        $user->save();
-        $login1 = new AuthenticationController();
-        $login1->login($reg_email, $get_user_info_array->sub, $PARAMS = array());
-        header("Location: index.php?action=index&module=Home");
+    $user = new User();
+    $user->user_name = $reg_email;
+    $user->email1 = $reg_email;
+    $user->employee_status = 'Active';
+    $user->status = 'Active';
+    $user->user_hash = $user_hash;
+    $user->last_name = $reg_last_name;
+    $user->first_name = $reg_first_name;
+    $user->is_admin = 0;
+    $user->	phone_home = $reg_home_phone_number;
+    $user->	phone_mobile = $reg_phone_mobile_number;
+    $user->	address_street = $address_object->street_address;
+    $user->	address_city = $address_object->region;
+    $user->	address_country = $address_object->country;
+    $user->	address_postalcode = $address_object->postal_code;
+    $user->external_auth_only = 0;
+    $user->save();
+    $login1 = new AuthenticationController();
+    $login1->login($reg_email, $get_user_info_array->sub, $PARAMS = array());
+    header("Location: index.php?action=index&module=Home");
 }
 
 
