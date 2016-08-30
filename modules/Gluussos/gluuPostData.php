@@ -1,16 +1,13 @@
 <?php
-
-
 require_once("modules/Gluussos/oxd-rp/Register_site.php");
+require_once("modules/Gluussos/oxd-rp/Update_site_registration.php");
 ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
-
 $base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
 $db = DBManagerFactory::getInstance();
-
-     if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_register_page' )               !== false ) {
+if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_register_page' ) !== false ) {
     $config_option = json_encode(array(
         "oxd_host_ip" => '127.0.0.1',
         "oxd_host_port" =>$_POST['oxd_port'],
@@ -50,11 +47,11 @@ $db = DBManagerFactory::getInstance();
     $register_site->setRequestClientLogoutUri($config_option['logout_redirect_uri']);
     $register_site->setRequestScope($config_option['scope']);
     $status = $register_site->request();
-     if(!$status['status']){
-         $_SESSION['message_error'] = $status['message'];
-         SugarApplication::redirect('index.php?module=Gluussos&action=general');
-         return;
-     }
+    if(!$status['status']){
+        $_SESSION['message_error'] = $status['message'];
+        SugarApplication::redirect('index.php?module=Gluussos&action=general');
+        return;
+    }
     if($register_site->getResponseOxdId()){
         $oxd_id = $register_site->getResponseOxdId();
         if($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'")){
@@ -64,7 +61,7 @@ $db = DBManagerFactory::getInstance();
     $_SESSION['message_success'] = 'Site registered Successful. You can configure Gluu and Social Login now.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'openid_config_delete_scop' )           !== false ) {
+else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'openid_config_delete_scop' ) !== false ) {
     $get_scopes =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'scopes'"))["gluu_value"],true);
     $up_cust_sc =  array();
     foreach($get_scopes as $custom_scop){
@@ -73,12 +70,11 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
         }
     }
     $get_scopes = json_encode($up_cust_sc);
-
     $result = $db->query("UPDATE `sugar`.`gluu_table` SET `gluu_value` = '$get_scopes' WHERE `gluu_action` LIKE 'scopes';");
     $_SESSION['message_success'] = 'Scope deleted Successfully.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_oxd_id_reset' )                !== false and !empty($_REQUEST['resetButton'])) {
+else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_oxd_id_reset' )  !== false and !empty($_REQUEST['resetButton'])) {
     $db->query("DROP TABLE IF EXISTS `gluu_table`;");
     $_SESSION['message_success'] = 'Configurations deleted Successfully.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
@@ -92,12 +88,11 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
         }
     }
     $get_scopes = json_encode($up_cust_sc);
-
     $db->query("UPDATE `sugar`.`gluu_table` SET `gluu_value` = '$get_scopes' WHERE `gluu_action` LIKE 'custom_scripts';");
     $_SESSION['message_success'] = 'Custom script deleted Successfully.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'sugar_crm_config_page' )               !== false ) {
+else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'sugar_crm_config_page' ) !== false ) {
 
     $db->query("UPDATE `gluu_table` SET `gluu_value` = '".$_REQUEST['gluuoxd_openid_login_theme']."' WHERE `gluu_action` LIKE 'loginTheme';");
     $db->query("UPDATE `gluu_table` SET `gluu_value` = '".$_REQUEST['gluuoxd_openid_login_custom_theme']."' WHERE `gluu_action` LIKE 'loginCustomTheme';");
@@ -109,7 +104,7 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'suga
     $_SESSION['message_success'] = 'Your configuration has been saved.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'openid_config_page' )                  !== false ) {
+else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'openid_config_page' ) !== false ) {
     $params = $_REQUEST;
     $message_success = '';
     $message_error = '';
@@ -128,6 +123,25 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
         }
         $get_scopes = json_encode($get_scopes);
         $db->query("UPDATE `gluu_table` SET `gluu_value` = '$get_scopes' WHERE `gluu_action` LIKE 'scopes';");
+    }
+    $config_option = json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
+    $oxd_id = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'"))["gluu_value"];
+    $update_site_registration = new Update_site_registration();
+    $update_site_registration->setRequestOxdId($oxd_id);
+    $update_site_registration->setRequestAcrValues($config_option['acr_values']);
+    $update_site_registration->setRequestAuthorizationRedirectUri($config_option['authorization_redirect_uri']);
+    $update_site_registration->setRequestRedirectUris($config_option['redirect_uris']);
+    $update_site_registration->setRequestGrantTypes($config_option['grant_types']);
+    $update_site_registration->setRequestResponseTypes(['code']);
+    $update_site_registration->setRequestLogoutRedirectUri($config_option['logout_redirect_uri']);
+    $update_site_registration->setRequestContacts([$oxd_config['admin_email']]);
+    $update_site_registration->setRequestApplicationType('web');
+    $update_site_registration->setRequestClientLogoutUri($config_option['logout_redirect_uri']);
+    $update_site_registration->setRequestScope($config_option['scope']);
+    $status = $update_site_registration->request();
+    $new_oxd_id = $update_site_registration->getResponseOxdId();
+    if($new_oxd_id){
+        $result = $db->query("UPDATE `gluu_table` SET `gluu_value` = '$new_oxd_id' WHERE `gluu_action` LIKE 'oxd_id';");
     }
     $custom_scripts =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'custom_scripts'"))["gluu_value"],true);
 
@@ -173,6 +187,7 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
                         array_push($custom_scripts, array('name'=>$params['name_in_site_'.$i],'image'=>$target_file,'value'=>$params['name_in_gluu_'.$i]));
                         $custom_scripts_json = json_encode($custom_scripts);
                         $db->query("UPDATE `gluu_table` SET `gluu_value` = '$custom_scripts_json' WHERE `gluu_action` LIKE 'custom_scripts';");
+
                     } else {
                         $message_error.= "Sorry, there was an error uploading ".$_FILES['images_'.$i]["name"]." file.<br/>";
                         break;
@@ -192,10 +207,9 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
     }
     $_SESSION['message_success'] = 'Your OpenID connect configuration has been saved.';
     $_SESSION['message_error'] = $message_error;
-   SugarApplication::redirect('index.php?module=Gluussos&action=general');
-   exit;
+    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+    exit;
 }
-
 function file_newname($path, $filename){
     if ($pos = strrpos($filename, '.')) {
         $name = substr($filename, 0, $pos);
