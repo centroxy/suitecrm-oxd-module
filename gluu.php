@@ -23,8 +23,6 @@ $conf = json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_tab
 $get_tokens_by_code = new Get_tokens_by_code();
 $get_tokens_by_code->setRequestOxdId($oxd_id);
 $get_tokens_by_code->setRequestCode($_REQUEST['code']);
-$get_tokens_by_code->setRequestState($_REQUEST['state']);
-$get_tokens_by_code->setRequestScopes($config_option["scope"]);
 $get_tokens_by_code->request();
 $get_tokens_by_code_array = $get_tokens_by_code->getResponseObject()->data->id_token_claims;
 $get_user_info = new Get_user_info();

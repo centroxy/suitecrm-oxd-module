@@ -18,7 +18,7 @@ In order to use the SuiteCRM Module, you will need to have deployed a standard O
 
 ### Step 1. Download
 
-[Github source](https://github.com/GluuFederation/gluu-sso-SuiteCRM-module/raw/master/SuiteCRM_gluu_sso_2.4.4/SuiteCRM_gluu_sso_2.4.4.zip)
+[Github source](https://github.com/GluuFederation/gluu-sso-SuiteCRM-module/blob/master/SuiteCRM_gluu_sso_2.4.4.zip?raw=true)
 
 ### Step 2. Install module
 

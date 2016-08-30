@@ -17,6 +17,11 @@ function remove_http($url) {
     return $url;
 }
 if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_register_page' ) !== false ) {
+    if(!isset($_SERVER['HTTPS']) or $_SERVER['HTTPS'] != "on") {
+        $_SESSION['message_error'] = 'OpenID Connect requires https. This plugin will not work if your website uses http only.';
+        SugarApplication::redirect('index.php?module=Gluussos&action=general');
+        return;
+    }
     $sugar_config['http_referer']['list'][] = remove_http($_POST['gluu_server_url']);
     $config_option = json_encode(array(
         "op_host" => $_POST['gluu_server_url'],
