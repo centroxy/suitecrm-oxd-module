@@ -6,7 +6,8 @@ ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
-$base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
+global $sugar_config;
+$base_url  = $sugar_config['site_url'];
 $db = DBManagerFactory::getInstance();
 function select_query($db, $action){
     $result = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '$action'"))["gluu_value"];

@@ -11,21 +11,8 @@ ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
-function ketBasePath($str='') {
-    if ( isset($_SERVER['HTTP_HOST']) ) { $host = $_SERVER['HTTP_HOST']; }
-    else if ( isset($_SERVER['SERVER_NAME']) ) { $host = $_SERVER['SERVER_NAME']; }
-    else { $host = ''; }
-    if (!$str) {
-        if ($_SERVER['SCRIPT_NAME']) { $currentPath = dirname($_SERVER['SCRIPT_NAME']); }
-        else { $currentPath = dirname($_SERVER['PHP_SELF']); }
-        $currentPath = str_replace("\\","/",$currentPath);
-        if ($currentPath == '/') { $currentPath = ''; }
-        if ($host) { $currpath = 'http://' . $host . $currentPath .'/'; }
-        else { $currpath = ''; }
-        return $currpath;
-    }
-}
-$base_url  = ketBasePath();
+global $sugar_config;
+$base_url  = $sugar_config['site_url'];
 $db = DBManagerFactory::getInstance();
 if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluussos' ) !== false ) {
     if (isset($_REQUEST['error']) and strpos($_REQUEST['error'], 'session_selection_required') !== false) {
@@ -108,9 +95,9 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     } elseif (!empty($get_tokens_by_code_array->middle_name[0])) {
         $reg_middle_name = $get_tokens_by_code_array->middle_name[0];
     }
-    if (empty($get_user_info_array->email[0])) {
+    if (!empty($get_user_info_array->email[0])) {
         $reg_email = $get_user_info_array->email[0];
-    } elseif (empty($get_tokens_by_code_array->email[0])) {
+    } elseif (!empty($get_tokens_by_code_array->email[0])) {
         $reg_email = $get_tokens_by_code_array->email[0];
     }else{
         echo "<script type='application/javascript'>

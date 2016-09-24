@@ -2,7 +2,8 @@
 if(!gluu_is_oxd_registered()){
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-$base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
+global $sugar_config;
+$base_url  = $sugar_config['site_url'];
 
 $db = DBManagerFactory::getInstance();
 

@@ -1,20 +1,7 @@
 <?php
 
-function ketBasePath($str='') {
-    if ( isset($_SERVER['HTTP_HOST']) ) { $host = $_SERVER['HTTP_HOST']; }
-    else if ( isset($_SERVER['SERVER_NAME']) ) { $host = $_SERVER['SERVER_NAME']; }
-    else { $host = ''; }
-    if (!$str) {
-        if ($_SERVER['SCRIPT_NAME']) { $currentPath = dirname($_SERVER['SCRIPT_NAME']); }
-        else { $currentPath = dirname($_SERVER['PHP_SELF']); }
-        $currentPath = str_replace("\\","/",$currentPath);
-        if ($currentPath == '/') { $currentPath = ''; }
-        if ($host) { $currpath = 'http://' . $host . $currentPath .'/'; }
-        else { $currpath = ''; }
-        return $currpath;
-    }
-}
-$base_url  = ketBasePath();
+global $sugar_config;
+$base_url  = $sugar_config['site_url'];
 
 
 $db = DBManagerFactory::getInstance();
@@ -60,10 +47,7 @@ if(!select_query($db, 'gluu_auth_type')){
     $gluu_auth_type = 'default';
     $result = insert_query($db, 'gluu_auth_type', $gluu_auth_type);
 }
-if(!select_query($db, 'gluu_custom_url')){
-    $gluu_custom_url = $base_url;
-    $result = insert_query($db, 'gluu_custom_url', $gluu_custom_url);
-}
+
 if(!select_query($db, 'gluu_provider')){
     $gluu_provider = '';
     $result = insert_query($db, 'gluu_provider', $gluu_provider);
