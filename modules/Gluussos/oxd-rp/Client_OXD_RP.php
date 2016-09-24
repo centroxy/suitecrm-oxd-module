@@ -30,8 +30,8 @@ abstract class Client_OXD_RP{
      * request to oxd socket
      **/
     public function oxd_socket_request($data, $char_count = 8192){
-        $oxd_config = json_decode($this->db->fetchRow($this->db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
-        self::$socket = stream_socket_client( $oxd_config['oxd_host_ip'] . ':' . $oxd_config['oxd_host_port'], $errno, $errstr, STREAM_CLIENT_PERSISTENT);
+        $oxd_config = json_decode($this->db->fetchRow($this->db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'gluu_config'"))["gluu_value"],true);
+        self::$socket = stream_socket_client('127.0.0.1:' . $oxd_config['gluu_oxd_port'], $errno, $errstr, STREAM_CLIENT_PERSISTENT);
         if (!self::$socket) {
             return 'Can not connect to oxd server';
         }else{
@@ -67,14 +67,20 @@ abstract class Client_OXD_RP{
             if ($this->response_json) {
                 $object = json_decode($this->response_json);
                 if ($object->status == 'error') {
-                    return array('status'=> false, 'message'=> $object->data->error . ' : ' . $object->data->error_description);
+                    if($object->data->error == "invalid_op_host"){
+                        return array('status'=> false, 'message'=> $object->data->error);
+                    }elseif($object->data->error == "internal_error"){
+                        return array('status'=> false, 'message'=> $object->data->error , 'error_message'=>$object->data->error_description);
+                    }else{
+                        return array('status'=> false, 'message'=> $object->data->error . ' : ' . $object->data->error_description);
+                    }
                 } elseif ($object->status == 'ok') {
                     $this->response_object = json_decode($this->response_json);
                     return array('status'=> true);
                 }
             }
         }else{
-            return array('status'=> false, 'message'=> 'Can not connect to oxd server. Please look file oxd-config.json  configuration in your oxd server.');
+            return array('status'=> false, 'message'=> 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.');
         }
 
     }

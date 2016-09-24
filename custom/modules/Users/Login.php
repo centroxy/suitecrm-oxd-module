@@ -3,36 +3,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- * 
+
+ * SuiteCRM is an extension to SugarCRM Community Edition developed by Salesagility Ltd.
+ * Copyright (C) 2011 - 2016 Salesagility Ltd.
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
  * Free Software Foundation with the addition of the following permission added
  * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
  * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
  * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along with
  * this program; if not, see http://www.gnu.org/licenses or write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
- * 
+ *
  * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- * 
+ *
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
- * 
+ *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo. If the display of the logo is not reasonably feasible for
- * technical reasons, the Appropriate Legal Notices must display the words
- * "Powered by SugarCRM".
+ * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
+ * reasonably feasible for  technical reasons, the Appropriate Legal Notices must
+ * display the words  "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  ********************************************************************************/
 
 /*********************************************************************************
@@ -43,99 +46,35 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 /** @var AuthenticationController $authController */
-/*if(isset($_REQUEST['state'])){
-	var_dump($_REQUEST);exit;
-}*/
-$base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
-require_once("modules/Gluussos/oxd-rp/Get_authorization_url.php");
-$db = DBManagerFactory::getInstance();
 
-if(isset($_REQUEST['app_name'])){
-	$config_option = json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
-	$oxd_id = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'"))["gluu_value"];
+function select_query($db, $action){
+	$result = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '$action'"))["gluu_value"];
+	return $result;
+}
+$db = DBManagerFactory::getInstance();
+$gluu_send_user_check  = select_query($db, 'gluu_send_user_check');
+$gluu_oxd_id  = select_query($db, 'gluu_oxd_id');
+
+function login_url(){
+	$db = DBManagerFactory::getInstance();
+	$gluu_config           = json_decode(select_query($db, 'gluu_config'),true);
+	$gluu_auth_type        = select_query($db, 'gluu_auth_type');
+	$oxd_id = select_query($db, 'gluu_oxd_id');
+	require_once("modules/Gluussos/oxd-rp/Get_authorization_url.php");
+
 	$get_authorization_url = new Get_authorization_url();
 	$get_authorization_url->setRequestOxdId($oxd_id);
-	$get_authorization_url->setRequestAcrValues([$_REQUEST['app_name']]);
+
+
+	$get_authorization_url->setRequestScope($gluu_config['config_scopes']);
+	if($gluu_auth_type != "default"){
+		$get_authorization_url->setRequestAcrValues([$gluu_auth_type]);
+	}else{
+		$get_authorization_url->setRequestAcrValues(null);
+	}
 	$get_authorization_url->request();
 
-	if($get_authorization_url->getResponseAuthorizationUrl()){
-		header( "Location: ". $get_authorization_url->getResponseAuthorizationUrl() );
-		exit;
-	}else{
-		echo '<p style="color: red">Sorry, but oxd server is not switched on!</p>';
-	}
-
-}
-function login_html(){
-	$db = DBManagerFactory::getInstance();
-	$oxd_id = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_id'"))["gluu_value"];
-$html = '';
-	if($oxd_id){
-		$html.='<style>
-			.gluuox_login_icon_preview{
-				width:35px;
-				cursor:pointer;
-				display:inline;
-			}
-			.customer-account-login .page-title{
-				margin-top: -100px !important;
-			}
-		</style>
-		<link  href="modules/Gluussos/GluuOxd_Openid/css/bootstrap-social.css" rel="stylesheet">
-		<link  href="modules/Gluussos/GluuOxd_Openid/css/font-awesome.min.css" rel="stylesheet">';
-
-
-		$get_scopes =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'scopes'"))["gluu_value"],true);
-		$oxd_config =   json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'oxd_config'"))["gluu_value"],true);
-		$custom_scripts = json_decode($db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'custom_scripts'"))["gluu_value"],true);
-		$iconSpace =                  $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconSpace'"))["gluu_value"];
-		$iconCustomSize =             $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomSize'"))["gluu_value"];
-		$iconCustomWidth =            $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomWidth'"))["gluu_value"];
-		$iconCustomHeight =           $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomHeight'"))["gluu_value"];
-		$loginCustomTheme =           $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'loginCustomTheme'"))["gluu_value"];
-		$loginTheme =                 $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'loginTheme'"))["gluu_value"];
-		$iconCustomColor =            $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE 'iconCustomColor'"))["gluu_value"];
-
-
-		$enableds = array();
-		foreach($custom_scripts as $custom_script){
-			$enableds[] = array('enable'=>$db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '".$custom_script['value']."Enable'"), 'value'=>$custom_script['value'], 'name'=>$custom_script['name'], 'image'=>$custom_script['image']);
-		}
-		if($loginTheme!='longbutton') {
-
-			$html.='<style>.gluuOx_custom_login_icon_preview{cursor:pointer;}</style>';
-			if($loginTheme=='circle'){
-				$html.='<style> .gluuox_login_icon_preview, .gluuOx_custom_login_icon_preview{border-radius: 999px !important;}</style>';
-			 } else if($loginTheme=='oval'){
-				$html.='<style> .gluuox_login_icon_preview, .gluuOx_custom_login_icon_preview{border-radius: 5px !important;}</style>';
-			 }
-
-			if($loginCustomTheme!='custom') {
-				$html.='<div><p style="font-size: 40px">Login with</p>';
-
-					foreach($enableds as $enabled){
-						if($enabled['enable']){
-							$cl = "socialLogin('".$enabled['value']."')";
-							$html.='<img class="gluuox_login_icon_preview" id="gluuox_login_icon_preview_'.$enabled['value'].'" src="'.$enabled['image'].'"
-								 style="margin-left: '.$iconSpace.'px;  height:'.$iconCustomSize.'px; width:'.$iconCustomSize.'px;" onclick="'.$cl.'"  />';
-
-						 }
-					}
-			$html.='</div>
-				<br/>';
-			 }
-		}
-$base_url  = @( $_SERVER["HTTPS"] != 'on' ) ? 'http://'.$_SERVER["SERVER_NAME"] :  'https://'.$_SERVER["SERVER_NAME"];
-$html.="<br>
-		<script>
-
-
-			function socialLogin(appName){
-				window.location.href ='$base_url/index.php?module=Users&action=Login&app_name='+appName;
-			}
-		</script>";
-	}
-	return $html;
+	return $get_authorization_url->getResponseAuthorizationUrl();
 }
 $authController->authController->pre_login();
 
@@ -162,10 +101,12 @@ if ( sugar_is_file('custom/include/images/sugar_md.png') ) {
 else {
     $login_image = '<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
 }
-$gluu_login = login_html();
+
+$login_image_url = SugarThemeRegistry::current()->getImageURL('company_logo.png');
+$login_image = '<IMG src="'.$login_image_url.'" alt="SuiteCRM" style="margin: 5px 0;">';
+
 
 $sugar_smarty->assign('LOGIN_IMAGE',$login_image);
-$sugar_smarty->assign('gluu_login',$gluu_login);
 
 // See if any messages were passed along to display to the user.
 if(isset($_COOKIE['loginErrorMessage'])) {
@@ -255,7 +196,7 @@ if ( !empty($logindisplay) )
 			$captcha_privatekey = $admin->settings['captcha_private_key'];
 			$captcha_publickey = $admin->settings['captcha_public_key'];
 			$captcha_js .="<script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . "'></script><script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp_yui2.js') . "'></script>
-			<script type='text/javascript' src='http://api.recaptcha.net/js/recaptcha_ajax.js'></script>
+			<script type='text/javascript' src='http://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>
 			<script>
 			function initCaptcha(){
 			Recaptcha.create('$captcha_publickey' ,'captchaImage',{theme:'custom'});
@@ -304,5 +245,41 @@ if ( !empty($logindisplay) )
 		function validateAndSubmit(){generatepwd();}
 		</script>";
 	}
+if($gluu_send_user_check && $gluu_oxd_id) {
+	?>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-$sugar_smarty->display('custom/modules/Users/login.tpl'); ?>
+	<div class="container">
+		<!-- Trigger the modal with a button -->
+
+		<!-- Modal -->
+		<div class="modal fade in" id="myModal" style="display: block;">
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content" style=" height:350px !important;">
+					<div class="modal-footer">
+						<p style="text-align: center"><a href="<?php echo login_url();?>" class="btn btn-default">Login by OpenID Provider</a></p>
+					</div>
+					<div class="modal-footer">
+						<p style="text-align: center"><a type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Close</a></p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+	<?php
+}
+if (file_exists('themes/'.SugarThemeRegistry::current().'/tpls/login.tpl')) {
+	echo $sugar_smarty->display('themes/'.SugarThemeRegistry::current().'/tpls/login.tpl');
+} elseif (file_exists('custom/modules/Users/login.tpl')) {
+	echo $sugar_smarty->display('custom/modules/Users/login.tpl');
+} else {
+	echo $sugar_smarty->display('modules/Users/login.tpl');
+}
+
+

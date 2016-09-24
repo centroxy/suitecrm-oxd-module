@@ -1,10 +1,10 @@
 [TOC]
 
-# SuiteCRM  OpenID Connect Single Sign-On (SSO) Module by Gluu
+# SuiteCRM OpenID Connect Single Sign-On (SSO) Module By Gluu
 
 ![image](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/plugin.jpg)
 
-Gluu's SuiteCRM OpenID Connect Single Sign On (SSO) Module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).  
+Gluu's SuiteCRM OpenID Connect Single Sign-On (SSO) Module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).  
 
 ## Requirements
 In order to use the SuiteCRM Module, you will need to have deployed a standard OP like the Gluu Server and the oxd Server.
@@ -15,12 +15,9 @@ In order to use the SuiteCRM Module, you will need to have deployed a standard O
 
 
 ## Installation
-
-### Step 1. Download
-
+ 
+### Download
 [Github source](https://github.com/GluuFederation/gluu-sso-SuiteCRM-module/blob/master/SuiteCRM_gluu_sso_2.4.4.zip?raw=true)
-
-### Step 2. Install module
 
 1. Open menu tab Admin and click on ```Module loader``` button
 ![Manager](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/1.png) 
@@ -32,51 +29,61 @@ In order to use the SuiteCRM Module, you will need to have deployed a standard O
 3. Click on ```Install``` button. 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d4.png) 
 
-4. Open menu tab OpenID Connect Single Sign-On (SSO) Module by Gluu 
+4. Open menu tab OpenID Connect (SSO) Module by Gluu 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d5.png) 
 
-### Step 3. General
+## Configuration
 
-![General](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png)  
-
-1. Admin Email: please add your or admin email address for registrating site in Gluu server.
-2. Gluu Server URL: please add your Gluu server URL.
-3. Oxd port in your server: choose that port which is using oxd-server (see in oxd-server/conf/oxd-conf.json file).
-4. Click next to continue.
-
-If You are successfully registered in gluu server, you will see bottom page.
-
-![Oxd_id](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)
-
-To make sure everything is configured properly, login to your Gluu Server and navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
-
-### Step 4. OpenID Connect Provider (OP) Configuration
-
-#### Scopes.
-Scopes are groups of user attributes that are sent from your OP (in this case, the Gluu Server) to the application during login and enrollment. You can view all available scopes in your Gluu Server by navigating to the OpenID Connect > Scopes intefrace. 
-
-In the Module interface you can enable, disable and delete scopes. You can also add new scopes. If/when you add new scopes via the module, be sure to also add the same scopes in your gluu server. 
-![Scopes2](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
-
-#### Authentication.
-To specify the desired authentication mechanism navigate to the Configuration > Manage Custom Scripts menu in your Gluu Server. From there you can enable one of the out-of-the-box authentication mechanisms, such as password, U2F device (like yubikey), or mobile authentication. You can learn more about the Gluu Server authentication capabilities in the [docs](https://gluu.org/docs/multi-factor/intro/).
-![Customscripts](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d10.png)  
-
-Note:    
-- The authentication mechanism specified in your SuiteCRM module page must match the authentication mechanism specified in your Gluu Server.     
-- After saving the authentication mechanism in your Gluu Server, it will be displayed in the SuiteCRM Module configuration page too.      
-- If / when you create a new custom script, both fields are required. 
-
-### Step 5. SuiteCRM Configuration
-
-#### Customize Login Icons
+### General
  
-If custom scripts are not enabled, nothing will be showed. Customize shape, space between icons and size of the login icons.
+In your SuiteCRM admin menu panel you should now see the OpenID Connect menu tab. Click the link to navigate to the General configuration  page:
 
-![SuiteCRMConfiguration](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d11.png)  
+![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png) 
 
-### Step 6. Show icons in frontend
+1. New User Default Role: specify which role to give to new users upon registration.  
+2. URI of the OpenID Connect Provider: insert the URI of the OpenID Connect Provider.
+3. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
+4. Click `Register` to continue.
 
-Once you've configured all the options, you should see your supported authentication mechanisms on your default SuiteCRM login page like the screenshot below
+If your OpenID Provider supports dynamic registration, no additional steps are required in the general tab and you can navigate to the [OpenID Connect Configuration](#openid-connect-configuration) tab. 
 
-![frontend](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d12.png) 
+If your OpenID Connect Provider doesn't support dynamic registration, you will need to insert your OpenID Provider `client_id` and `client_secret` on the following page.
+
+![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)  
+
+To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/index.php?option=oxdOpenId`.
+
+> If you are using a Gluu server as your OpenID Provider, you can make sure everything is configured properly by logging into to your Gluu Server, navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
+
+### OpenID Connect Configuration
+
+![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d8.png) 
+
+#### Scopes
+
+Scopes are groups of user attributes that are sent from the OP to the application during login and enrollment. By default, the requested scopes are `profile`, `email`, and `openid`.  
+
+To view your OP's available scopes, in a web browser navigate to `https://OpenID-Provider/.well-known/openid-configuration`. For example, here are the scopes you can request if you're using [Google as your OP](https://accounts.google.com/.well-known/openid-configuration). 
+
+If you are using a Gluu server as your OpenID Provider, you can view all available scopes by navigating to the OpenID Connect > Scopes intefrace. 
+
+In the module interface you can enable, disable and delete scopes. 
+
+#### Manage Authentication
+
+##### Send user straight to OpenID Provider for authentication
+
+Check this box so that when users attempt to login they are sent straight to the OP, bypassing the local SuiteCRM login screen,.
+
+##### Select acr
+
+To signal which type of authentication should be used, an OpenID Connect client may request a specific authentication context class reference value (a.k.a. "acr"). The authentication options available will depend on which types of mechanisms the OP has been configured to support. The Gluu Server supports the following authentication mechanisms out-of-the-box: username/password (basic), Duo Security, Super Gluu, and U2F tokens, like Yubikey.  
+
+Navigate to your OpenID Provider confiuration webpage `https://OpenID-Provider/.well-known/openid-configuration` to see supported `acr_values`. In the `Select acr` section of the module page, choose the mechanism which you want for authentication. 
+
+Note: If the `Select acr` value is `none`, users will be sent to pass the OP's default authentication mechanism.
+
+##### Add acr
+
+The module will detect the OPs supported ACR values if this information is published in the OP's discovery endpoint. However, if the OP does not publish supported ACR values, you may need to add them manually. 
+
