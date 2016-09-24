@@ -51,7 +51,7 @@ If your OpenID Connect Provider doesn't support dynamic registration, you will n
 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)  
 
-To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/index.php?option=oxdOpenId`.
+To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/gluu.php?gluu_login=Gluussos`.
 
 > If you are using a Gluu server as your OpenID Provider, you can make sure everything is configured properly by logging into to your Gluu Server, navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
 
