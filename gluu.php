@@ -11,8 +11,24 @@ ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
-global $sugar_config;
-$base_url  = $sugar_config['site_url'];
+function getBaseUrl()
+{
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF'];
+
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
+    $pathInfo = pathinfo($currentPath);
+
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST'];
+
+    // output: http://
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+
+    // return: http://localhost/myproject/
+    return $protocol.$hostName.$pathInfo['dirname']."/";
+}
+$base_url  = getBaseUrl();
 $db = DBManagerFactory::getInstance();
 if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluussos' ) !== false ) {
     if (isset($_REQUEST['error']) and strpos($_REQUEST['error'], 'session_selection_required') !== false) {

@@ -2,8 +2,24 @@
 if(!gluu_is_oxd_registered()){
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
-global $sugar_config;
-$base_url  = $sugar_config['site_url'];
+function getBaseUrl()
+{
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF'];
+
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
+    $pathInfo = pathinfo($currentPath);
+
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST'];
+
+    // output: http://
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+
+    // return: http://localhost/myproject/
+    return $protocol.$hostName.$pathInfo['dirname'];
+}
+$base_url  = getBaseUrl();
 
 $db = DBManagerFactory::getInstance();
 

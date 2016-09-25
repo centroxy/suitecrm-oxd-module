@@ -247,31 +247,29 @@ if ( !empty($logindisplay) )
 	}
 if($gluu_send_user_check && $gluu_oxd_id) {
 	?>
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type="application/javascript">
+		jQuery( document ).ready(function() {
+			$( "#bigbutton" ).after( "<br/><br/><label>Login by OpenID Provider<input type='radio' name='radio' id='OpenID' value='Yes' /> </label>" +
+				"<br/><br/><label>Show login form<input type='radio' name='radio' id='base' value='No' /> </label>" );
+			$( "#bigbutton" ).after('<a href="<?php echo login_url();?>" style="background:green; color:#ffffff;border-radius: 0px;" class="btn btn-block" id="gluu_login">Login by OpenID Provider</a>');
+			jQuery('.input-group').hide();
+			jQuery('#bigbutton').hide();
+			$('input:radio[name="radio"]').change(
+				function(){
+					if ($(this).is(':checked') && $(this).val() == 'Yes') {
+						jQuery('#gluu_login').show();
+						jQuery('.input-group').hide();
+						jQuery('#bigbutton').hide();
+					}else{
+						jQuery('#gluu_login').hide();
+						jQuery('.input-group').show();
+						jQuery('#bigbutton').show();
+					}
+				});
+			$('#OpenID').attr('checked', true);
 
-	<div class="container">
-		<!-- Trigger the modal with a button -->
-
-		<!-- Modal -->
-		<div class="modal fade in" id="myModal" style="display: block;">
-			<div class="modal-dialog">
-
-				<!-- Modal content-->
-				<div class="modal-content" style=" height:350px !important;">
-					<div class="modal-footer">
-						<p style="text-align: center"><a href="<?php echo login_url();?>" class="btn btn-default">Login by OpenID Provider</a></p>
-					</div>
-					<div class="modal-footer">
-						<p style="text-align: center"><a type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Close</a></p>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-	</div>
+		});
+	</script>
 	<?php
 }
 if (file_exists('themes/'.SugarThemeRegistry::current().'/tpls/login.tpl')) {

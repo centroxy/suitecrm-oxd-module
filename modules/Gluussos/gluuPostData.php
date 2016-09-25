@@ -6,8 +6,24 @@ ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
-global $sugar_config;
-$base_url  = $sugar_config['site_url'];
+function getBaseUrl()
+{
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF'];
+
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
+    $pathInfo = pathinfo($currentPath);
+
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST'];
+
+    // output: http://
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+
+    // return: http://localhost/myproject/
+    return $protocol.$hostName.$pathInfo['dirname'];
+}
+$base_url  = getBaseUrl();
 $db = DBManagerFactory::getInstance();
 function select_query($db, $action){
     $result = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '$action'"))["gluu_value"];
@@ -23,7 +39,7 @@ function update_query($db, $action, $value){
     return $result;
 }
 
-if( isset( $_REQUEST['user_male'] ) and strpos( $_REQUEST['user_male'], $GLOBALS['current_user']->email1 )  !== false and !empty($_REQUEST['submit'])) {
+if( isset( $_REQUEST['submit'] ) and strpos( $_REQUEST['submit'], 'delete' )  !== false and !empty($_REQUEST['submit'])) {
     $db->query("DROP TABLE IF EXISTS `gluu_table`;");
     unset($_SESSION['openid_error']);
     $_SESSION['message_success'] = 'Configurations deleted Successfully.';

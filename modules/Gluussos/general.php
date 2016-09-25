@@ -1,7 +1,22 @@
 <?php
+function getBaseUrl()
+{
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF'];
 
-global $sugar_config;
-$base_url  = $sugar_config['site_url'];
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
+    $pathInfo = pathinfo($currentPath);
+
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST'];
+
+    // output: http://
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+
+    // return: http://localhost/myproject/
+    return $protocol.$hostName.$pathInfo['dirname'];
+}
+$base_url  = getBaseUrl();
 
 
 $db = DBManagerFactory::getInstance();
@@ -241,7 +256,7 @@ function gluu_is_oxd_registered(){
                                                 <div><input type="submit" name="register" value="Register" style="width: 120px; float: right;"/></div>
                                             </td>
                                             <td>
-                                                <div><a class="button button-primary button-large" style="text-align:center; float: left; width: 120px;background-color: red" href="index.php?module=Gluussos&action=gluuPostData&submit=delete&user_male=<?php echo $GLOBALS['current_user']->email1;?>">Delete</a></div>
+                                                <div><a class="button button-primary button-large" style="text-align:center; float: left; width: 120px;background-color: red" href="index.php?module=Gluussos&action=gluuPostData&submit=delete">Delete</a></div>
                                             </td>
                                         </tr>
                                         <?php }else{?>
@@ -251,7 +266,7 @@ function gluu_is_oxd_registered(){
                                                     <div><input type="submit" name="register" value="Register" style="width: 120px; float: right;" class=""/></div>
                                                 </td>
                                                     <td>
-                                                        <div><a class="button button-primary button-large" style="text-align:center; float: left; width: 120px;background-color: red" href="index.php?module=Gluussos&action=gluuPostData&submit=delete&user_male=<?php echo $GLOBALS['current_user']->email1;?>">Delete</a></div>
+                                                        <div><a class="button button-primary button-large" style="text-align:center; float: left; width: 120px;background-color: red" href="index.php?module=Gluussos&action=gluuPostData&submit=delete">Delete</a></div>
                                                     </td>
                                                 <?php }else{?>
                                                     <td>
@@ -587,7 +602,7 @@ function gluu_is_oxd_registered(){
                                     </div>
                                 </div>
                                 <br/>
-                                
+
                             </div>
                             <div>
                                 <input class="set_oxd_config" style="width: 100px" type="submit" class="button button-primary button-large" <?php if (!gluu_is_oxd_registered()) echo 'disabled' ?> value="Save" name="set_oxd_config"/>
