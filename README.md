@@ -17,7 +17,7 @@ In order to use the SuiteCRM Module, you will need to have deployed a standard O
 ## Installation
  
 ### Download
-[Github source](https://github.com/GluuFederation/gluu-sso-SuiteCRM-module/blob/master/SuiteCRM_gluu_sso_2.4.4.zip?raw=true)
+[Github source](https://github.com/GluuFederation/gluu-sso-SugarCRM-module/blob/master/gluu-sso-SugarCRM-module.zip?raw=true)
 
 1. Open menu tab Admin and click on ```Module loader``` button
 ![Manager](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/1.png) 
@@ -87,3 +87,6 @@ Note: If the `Select acr` value is `none`, users will be sent to pass the OP's d
 
 The module will detect the OPs supported ACR values if this information is published in the OP's discovery endpoint. However, if the OP does not publish supported ACR values, you may need to add them manually. 
 
+#### Show icons in frontend
+
+![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
