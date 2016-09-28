@@ -88,6 +88,8 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }
     if  (!empty($_POST['gluu_custom_logout'])) {
         update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+    }else{
+        update_query($db, 'gluu_custom_logout', '');
     }
     if (isset($_POST['gluu_provider']) and !empty($_POST['gluu_provider'])) {
         $gluu_provider = $_POST['gluu_provider'];
@@ -405,6 +407,8 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
     if  (!empty($_POST['gluu_custom_logout'])) {
 
         update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+    }else{
+        update_query($db, 'gluu_custom_logout', '');
     }
     $gluu_config = json_encode(array(
         "gluu_oxd_port" =>$_POST['gluu_oxd_port'],
