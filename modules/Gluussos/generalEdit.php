@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!gluu_is_oxd_registered()){
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
@@ -34,7 +35,8 @@ $gluu_acr              = json_decode(select_query($db, 'gluu_acr'),true);
 $gluu_auth_type        = select_query($db, 'gluu_auth_type');
 $gluu_send_user_check  = select_query($db, 'gluu_send_user_check');
 $gluu_provider         = select_query($db, 'gluu_provider');
-$gluu_user_role         = select_query($db, 'gluu_user_role');
+$gluu_user_role        = select_query($db, 'gluu_user_role');
+$gluu_custom_logout    = select_query($db, 'gluu_custom_logout');
 function gluu_is_oxd_registered(){
     $db = DBManagerFactory::getInstance();
     if(select_query($db, 'gluu_oxd_id')){
@@ -147,6 +149,14 @@ function gluu_is_oxd_registered(){
                                            autofocus="true" disabled placeholder="Enter URI of the OpenID Connect Provider."
                                            style="width:400px;"
                                            value="<?php echo $gluu_provider; ?>"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Custom URI after logout:</b></td>
+                                <td><input class="" type="url" name="gluu_custom_logout" id="gluu_custom_logout"
+                                           autofocus="true"  placeholder="Enter custom URI after logout"
+                                           style="width:400px;"
+                                           value="<?php echo $gluu_custom_logout;?>"/>
                                 </td>
                             </tr>
                             <?php if(!empty($gluu_config['gluu_client_id']) and !empty($gluu_config['gluu_client_secret'])){?>

@@ -46,8 +46,18 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $get_tokens_by_code->setRequestCode($_REQUEST['code']);
     $get_tokens_by_code->setRequestState($_REQUEST['state']);
     $get_tokens_by_code->request();
-    //var_dump($get_tokens_by_code->getResponseObject());exit;
-    $get_tokens_by_code_array = $get_tokens_by_code->getResponseObject()->data->id_token_claims;
+
+    $get_tokens_by_code_array = array();
+    if(!empty($get_tokens_by_code->getResponseObject()->data->id_token_claims))
+    {
+        $get_tokens_by_code_array = $get_tokens_by_code->getResponseObject()->data->id_token_claims;
+    }else{
+        echo "<script type='application/javascript'>
+					alert('Missing claims : Please talk to your organizational system administrator or try again.');
+					location.href='".$base_url."';
+				 </script>";
+        exit;
+    }
     $get_user_info = new Get_user_info();
     $get_user_info->setRequestOxdId($oxd_id);
     $get_user_info->setRequestAccessToken($get_tokens_by_code->getResponseAccessToken());
@@ -58,9 +68,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $_SESSION['user_oxd_access_token'] = $get_tokens_by_code->getResponseAccessToken();
     $_SESSION['session_state'] = $_REQUEST['session_state'];
     $_SESSION['state'] = $_REQUEST['state'];
-
     $get_user_info_array = $get_user_info->getResponseObject()->data->claims;
-
     $reg_first_name = '';
     $reg_user_name = '';
     $reg_last_name = '';
@@ -81,6 +89,17 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $reg_street_address = '';
     $reg_street_address_2 = '';
     $reg_birthdate = '';
+    if (!empty($get_user_info_array->email[0])) {
+        $reg_email = $get_user_info_array->email[0];
+    } elseif (!empty($get_tokens_by_code_array->email[0])) {
+        $reg_email = $get_tokens_by_code_array->email[0];
+    }else{
+        echo "<script type='application/javascript'>
+					alert('Missing claim : (email). Please talk to your organizational system administrator.');
+					location.href='".$base_url."';
+				 </script>";
+        exit;
+    }
     if (!empty($get_user_info_array->website[0])) {
         $reg_website = $get_user_info_array->website[0];
     } elseif (!empty($get_tokens_by_code_array->website[0])) {
@@ -111,17 +130,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     } elseif (!empty($get_tokens_by_code_array->middle_name[0])) {
         $reg_middle_name = $get_tokens_by_code_array->middle_name[0];
     }
-    if (!empty($get_user_info_array->email[0])) {
-        $reg_email = $get_user_info_array->email[0];
-    } elseif (!empty($get_tokens_by_code_array->email[0])) {
-        $reg_email = $get_tokens_by_code_array->email[0];
-    }else{
-        echo "<script type='application/javascript'>
-					alert('Missing claims : (email or username). Please talk to your organizational system administrator.');
-					location.href='".$base_url."';
-				 </script>";
-        exit;
-    }
+
     if (!empty($get_user_info_array->country[0])) {
         $reg_country = $get_user_info_array->country[0];
     } elseif (!empty($get_tokens_by_code_array->country[0])) {
@@ -199,49 +208,42 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $ut = $GLOBALS['current_user']->getPreference('ut');
     include_once('modules/Users/authentication/AuthenticationController.php');
     $login = new AuthenticationController();
-    if ($login->login($reg_email, $reg_email, $PARAMS = array())) {
-        $user = new User();
-        $user->id = $GLOBALS['current_user']->id;
-        $user->user_name = $reg_email;
-        $user->email1 = $reg_email;
-        $user->employee_status = 'Active';
-        $user->status = 'Active';
-        $user->user_hash = $user_hash;
-        $user->last_name = $reg_last_name;
-        $user->first_name = $reg_first_name;
-        $user->is_admin = $gluu_user_role;
-        $user->phone_home = $reg_home_phone_number;
-        $user->phone_mobile = $reg_phone_mobile_number;
-        $user->address_street = $reg_street_address;
-        $user->address_city = $reg_city;
-        $user->address_country = $reg_country;
-        $user->address_postalcode = $reg_postal_code;
-        $user->external_auth_only = 0;
-        $user->save();
+    global $sugar_config;
+    $user = new User();
+     if($reg_email){
+         $user->retrieve_by_email_address($reg_email);
+         if($user->id){
+             $GLOBALS['current_user'] = $user;
+             $_SESSION['authenticated_user_id'] = $user->id;
+             $_SESSION['unique_key'] = $sugar_config['unique_key'];
+             $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
+             header("Location: index.php?action=index&module=Home");
+             exit;
+         }else{
+             $user->user_name = $reg_email;
+             $user->email1 = $reg_email;
+             $user->employee_status = 'Active';
+             $user->status = 'Active';
+             $user->user_hash = $user_hash;
+             $user->last_name = $reg_last_name;
+             $user->first_name = $reg_first_name;
+             $user->is_admin = $gluu_user_role;
+             $user->phone_home = $reg_home_phone_number;
+             $user->phone_mobile = $reg_phone_mobile_number;
+             $user->address_street = $reg_street_address;
+             $user->address_city = $reg_city;
+             $user->address_country = $reg_country;
+             $user->address_postalcode = $reg_postal_code;
+             $user->external_auth_only = 0;
+             $user->save();
+             $login->login($reg_email, $reg_email, $PARAMS = array());
+             header("Location: index.php?action=index&module=Home");
+             exit;
+         }
 
-        header("Location: index.php?action=index&module=Home");
-    } else {
-        $user = new User();
-        $user->user_name = $reg_email;
-        $user->email1 = $reg_email;
-        $user->employee_status = 'Active';
-        $user->status = 'Active';
-        $user->user_hash = $user_hash;
-        $user->last_name = $reg_last_name;
-        $user->first_name = $reg_first_name;
-        $user->is_admin = $gluu_user_role;
-        $user->phone_home = $reg_home_phone_number;
-        $user->phone_mobile = $reg_phone_mobile_number;
-        $user->address_street = $reg_street_address;
-        $user->address_city = $reg_city;
-        $user->address_country = $reg_country;
-        $user->address_postalcode = $reg_postal_code;
-        $user->external_auth_only = 0;
-        $user->save();
-        $login1 = new AuthenticationController();
-        $login1->login($reg_email, $get_user_info_array->sub, $PARAMS = array());
-        header("Location: index.php?action=index&module=Home");
     }
+
+
 }
 
 

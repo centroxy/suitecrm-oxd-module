@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once("modules/Gluussos/oxd-rp/Register_site.php");
 require_once("modules/Gluussos/oxd-rp/Update_site_registration.php");
 ob_start();
@@ -84,6 +85,9 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             SugarApplication::redirect('index.php?module=Gluussos&action=general');
             return;
         }
+    }
+    if  (!empty($_POST['gluu_custom_logout'])) {
+        update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
     }
     if (isset($_POST['gluu_provider']) and !empty($_POST['gluu_provider'])) {
         $gluu_provider = $_POST['gluu_provider'];
@@ -398,7 +402,10 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
         SugarApplication::redirect('index.php?module=Gluussos&action=generalEdit');
         return;
     }
+    if  (!empty($_POST['gluu_custom_logout'])) {
 
+        update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+    }
     $gluu_config = json_encode(array(
         "gluu_oxd_port" =>$_POST['gluu_oxd_port'],
         "admin_email" => $GLOBALS['current_user']->email1,

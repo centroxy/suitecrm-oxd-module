@@ -81,6 +81,10 @@ $installdefs = array (
       'to' => 'custom/include/globalControlLinks.php',
     ),
       array (
+          'from' => '<basepath>/custom/application/Ext/Include/modules.ext.php',
+          'to' => 'custom/application/Ext/Include/modules.ext.php',
+      ),
+      array (
           'from' => '<basepath>/modules/Gluussos',
           'to' => 'modules/Gluussos',
       ),
