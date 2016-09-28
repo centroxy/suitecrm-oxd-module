@@ -42,8 +42,9 @@ In your SuiteCRM admin menu panel you should now see the OpenID Connect menu tab
 
 1. New User Default Role: specify which role to give to new users upon registration.  
 2. URI of the OpenID Connect Provider: insert the URI of the OpenID Connect Provider.
-3. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
-4. Click `Register` to continue.
+3. Custom URI after logout: custom URI after logout (for example "Thank you" page).
+4. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
+5. Click `Register` to continue.
 
 If your OpenID Provider supports dynamic registration, no additional steps are required in the general tab and you can navigate to the [OpenID Connect Configuration](#openid-connect-configuration) tab. 
 
@@ -73,7 +74,9 @@ In the module interface you can enable, disable and delete scopes.
 
 ##### Send user straight to OpenID Provider for authentication
 
-Check this box so that when users attempt to login they are sent straight to the OP, bypassing the local SuiteCRM login screen,.
+Check this box so that when users attempt to login they are sent straight to the OP, bypassing the local SuiteCRM login screen.
+When it is not checked, it will give proof the following screen.   
+![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
 
 ##### Select acr
 
@@ -87,6 +90,4 @@ Note: If the `Select acr` value is `none`, users will be sent to pass the OP's d
 
 The module will detect the OPs supported ACR values if this information is published in the OP's discovery endpoint. However, if the OP does not publish supported ACR values, you may need to add them manually. 
 
-#### Show icons in frontend
 
-![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
