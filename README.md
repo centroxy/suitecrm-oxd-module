@@ -1,13 +1,11 @@
-[TOC]
-
 # SuiteCRM OpenID Connect Single Sign-On (SSO) Module By Gluu
 
 ![image](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/plugin.jpg)
 
-Gluu's SuiteCRM OpenID Connect Single Sign-On (SSO) Module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).  
+Gluu's OpenID Connect Single Sign-On (SSO) SuiteCRM module will enable you to authenticate users against any standard OpenID Connect Provider (OP). If you don't already have an OP you can [deploy the free open source Gluu Server](https://gluu.org/docs/deployment).  
 
 ## Requirements
-In order to use the SuiteCRM Module, you will need to have deployed a standard OP like the Gluu Server and the oxd Server.
+In order to use the SuiteCRM module you will need to have a standard OP (like Google or a Gluu Server) and the oxd server.
 
 * [Gluu Server Installation Guide](https://www.gluu.org/docs/deployment/).
 
@@ -40,12 +38,13 @@ In your SuiteCRM admin menu panel you should now see the OpenID Connect menu tab
 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png) 
 
-1. Automatically register any user with an account in the OpenID Provider. 
-2. New User Default Role: specify which role to give to new users upon registration.  
-3. URI of the OpenID Provider: insert the URI of the OpenID Connect Provider.
-4. Custom URI after logout: custom URI after logout (for example "Thank you" page).
-5. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
-6. Click `Register` to continue.
+1. Automatically register any user with an account in the OpenID Provider: By setting registration to automatic, any user with an account in the OP will be able to dynamically register for an account in your SuiteCRM site. They will be assigned the new user default role specified below.
+2. Only register users with the following role(s) in the OP: Using this option you can limit registration to users who have a specified role in the OP, for instance `suitecrm`. This is not configurable in all OP's. It is configurable if you are using a Gluu Server. [Follow the instructions below](#role-based-enrollment) to limit access based on an OP role. 
+3. New User Default Role: specify which role to give to new users upon registration.  
+4. URI of the OpenID Provider: insert the URI of the OpenID Connect Provider.
+5. Custom URI after logout: custom URI after logout (for example "Thank you" page).
+6. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
+7. Click `Register` to continue.
 
 If your OpenID Provider supports dynamic registration, no additional steps are required in the general tab and you can navigate to the [OpenID Connect Configuration](#openid-connect-configuration) tab. 
 
@@ -56,6 +55,10 @@ If your OpenID Connect Provider doesn't support dynamic registration, you will n
 To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/index.php?option=oxdOpenId`.
 
 > If you are using a Gluu server as your OpenID Provider, you can make sure everything is configured properly by logging into to your Gluu Server, navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
+
+#### Role based enrollment
+
+Navigate to your Gluu Server admin GUI. Click the `Users` tab in the left hand navigation menu. Select `Manage People`. Find the person(s) who should have access. Click their user entry. Add the `User Permission` attribute to the person and specify the same value as in the module. For instance, if in the module you have limit enrollment to user(s) with role = `suitecrm`, then you should also have `User Permission` = `suitecrm` in the user entry. Update the user record, and now they are ready for enrollment at your SuiteCRM site. 
 
 ### OpenID Connect Configuration
 
