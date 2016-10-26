@@ -71,6 +71,8 @@ If you are using a Gluu server as your OpenID Provider, you can view all availab
 
 In the module interface you can enable, disable and delete scopes. 
 
+> If you have chosen to limit enrollment to users with specific roles in the OP, you will also need to request the `Permission` scope, as shown in the above screenshot. 
+
 #### Authentication
 
 ##### Bypass the local SuiteCRM login page and send users straight to the OP for authentication
