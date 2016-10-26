@@ -58,6 +58,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
 				 </script>";
         exit;
     }
+
     $get_user_info = new Get_user_info();
     $get_user_info->setRequestOxdId($oxd_id);
     $get_user_info->setRequestAccessToken($get_tokens_by_code->getResponseAccessToken());
@@ -89,6 +90,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $reg_street_address = '';
     $reg_street_address_2 = '';
     $reg_birthdate = '';
+    $reg_user_permission = '';
     if (!empty($get_user_info_array->email[0])) {
         $reg_email = $get_user_info_array->email[0];
     } elseif (!empty($get_tokens_by_code_array->email[0])) {
@@ -203,8 +205,14 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
         $email_split = explode("@", $reg_email);
         $username = $email_split[0];
     }
+    if(!empty($get_user_info_array->permission[0])){
+        $world = str_replace("[","",$get_user_info_array->permission[0]);
+        $reg_user_permission = str_replace("]","",$world);
+    }elseif(!empty($get_tokens_by_code_array->permission[0])){
+        $world = str_replace("[","",$get_user_info_array->permission[0]);
+        $reg_user_permission = str_replace("]","",$world);
+    }
 
-    $user_hash = User::getPasswordHash($reg_email);
     $ut = $GLOBALS['current_user']->getPreference('ut');
     include_once('modules/Users/authentication/AuthenticationController.php');
     $login = new AuthenticationController();
@@ -220,6 +228,24 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              header("Location: index.php?action=index&module=Home");
              exit;
          }else{
+             $bool = true;
+             $gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
+             $gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
+             if($gluu_users_can_register == 2 and !empty($gluu_new_roles)){
+                 if (!in_array($reg_user_permission, $gluu_new_roles)) {
+                     $bool = false;
+                 }else{
+                     $bool = True;
+                 }
+             }
+             if(!$bool){
+                 echo "<script>
+					alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
+					location.href='index.php?action=index&module=Home';
+				 </script>";
+                 exit;
+             }
+             $user_hash = User::getPasswordHash($reg_email);
              $user->user_name = $reg_email;
              $user->email1 = $reg_email;
              $user->employee_status = 'Active';

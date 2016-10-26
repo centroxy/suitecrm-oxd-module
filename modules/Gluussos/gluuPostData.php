@@ -1,4 +1,5 @@
 <?php
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once("modules/Gluussos/oxd-rp/Register_site.php");
 require_once("modules/Gluussos/oxd-rp/Update_site_registration.php");
@@ -69,6 +70,29 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }else{
         update_query($db, 'gluu_user_role', 0);
     }
+    if ($_POST['gluu_users_can_register']==1) {
+        update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
+    elseif($_POST['gluu_users_can_register']==2){
+        update_query($db, 'gluu_users_can_register', 2);
+
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
     if (empty($_POST['gluu_oxd_port'])) {
         $_SESSION['message_error'] = 'All the fields are required. Please enter valid entries.';
         SugarApplication::redirect('index.php?module=Gluussos&action=general');
@@ -87,16 +111,25 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
         }
     }
     if  (!empty($_POST['gluu_custom_logout'])) {
-        update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+        if (filter_var($_POST['gluu_custom_logout'], FILTER_VALIDATE_URL) === false) {
+            $_SESSION['message_error'] = 'Please enter valid Custom URI.';
+        }else{
+            update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+        }
     }else{
         update_query($db, 'gluu_custom_logout', '');
     }
     if (isset($_POST['gluu_provider']) and !empty($_POST['gluu_provider'])) {
         $gluu_provider = $_POST['gluu_provider'];
         $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-        $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration');
+        $arrContextOptions=array(
+            "ssl"=>array(
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ),
+        );
+        $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
         $obj = json_decode($json);
-
         if(!empty($obj->userinfo_endpoint)){
 
             if(empty($obj->registration_endpoint)){
@@ -111,6 +144,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                     "gluu_client_secret" => "",
                     "config_acr" => []
                 ));
+                if($_POST['gluu_users_can_register']==2){
+                    $config = json_decode(select_query($db, 'gluu_config'),true);
+                    array_push($config['config_scopes'],'permission');
+                    $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                }
                 $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
                 if(isset($_POST['gluu_client_id']) and !empty($_POST['gluu_client_id']) and
                     isset($_POST['gluu_client_secret']) and !empty($_POST['gluu_client_secret'])){
@@ -125,6 +163,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                         "config_acr" => []
                     ));
                     $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
+                    if($_POST['gluu_users_can_register']==2){
+                        $config = json_decode(select_query($db, 'gluu_config'),true);
+                        array_push($config['config_scopes'],'permission');
+                        $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                    }
                     $register_site = new Register_site();
                     $register_site->setRequestOpHost($gluu_provider);
                     $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -201,7 +244,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                     "config_acr" => []
                 ));
                 $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
-
+                if($_POST['gluu_users_can_register']==2){
+                    $config = json_decode(select_query($db, 'gluu_config'),true);
+                    array_push($config['config_scopes'],'permission');
+                    $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                }
                 $register_site = new Register_site();
                 $register_site->setRequestOpHost($gluu_provider);
                 $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -260,7 +307,7 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             }
         }
         else{
-            $_SESSION['message_error'] = 'Please enter correct URI of the OpenID Connect Provider';
+            $_SESSION['message_error'] = 'Please enter correct URI of the OpenID Provider';
             SugarApplication::redirect('index.php?module=Gluussos&action=general');
             return;
         }
@@ -278,6 +325,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             "config_acr" => []
         ));
         $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
+        if($_POST['gluu_users_can_register']==2){
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }
         $register_site = new Register_site();
         $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
         $register_site->setRequestLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
@@ -307,7 +359,13 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
             $gluu_provider = $register_site->getResponseOpHost();
             $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-            $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration');
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
             $obj = json_decode($json);
             $register_site = new Register_site();
             $register_site->setRequestOpHost($gluu_provider);
@@ -370,24 +428,40 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }
 }
 else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_oxd_edit' ) !== false) {
+
     if($_POST['gluu_user_role']){
         update_query($db, 'gluu_user_role', $_POST['gluu_user_role']);
     }else{
         update_query($db, 'gluu_user_role', 0);
     }
-    $gluu_config =   json_decode(select_query($db, "gluu_config"),true);
-    $gluu_config['gluu_client_id'] = '';
-    $gluu_config['gluu_client_secret'] = '';
-    $gluu_oxd_id = update_query($db, 'gluu_oxd_id', '');
+    if ($_POST['gluu_users_can_register']==1) {
+        update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
+    elseif($_POST['gluu_users_can_register']==2){
+        update_query($db, 'gluu_users_can_register', 2);
 
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
     $get_scopes = json_encode(array("openid", "profile","email"));
     $get_scopes = update_query($db, 'get_scopes', $get_scopes);
 
     $gluu_acr = json_encode(array("none"));
     $gluu_acr = update_query($db, 'gluu_acr', $gluu_acr);
-
-    $gluu_config = json_encode($gluu_config);
-    $gluu_config = update_query($db, 'gluu_config', $gluu_config);
 
     if(!isset($_SERVER['HTTPS']) or $_SERVER['HTTPS'] != "on") {
         $_SESSION['message_error'] = 'OpenID Connect requires https. This plugin will not work if your website uses http only.';
@@ -405,12 +479,16 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
         return;
     }
     if  (!empty($_POST['gluu_custom_logout'])) {
-
-        update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+        if (filter_var($_POST['gluu_custom_logout'], FILTER_VALIDATE_URL) === false) {
+            $_SESSION['message_error'] = 'Please enter valid Custom URI.';
+        }else{
+            update_query($db, 'gluu_custom_logout', $_POST['gluu_custom_logout']);
+        }
     }else{
         update_query($db, 'gluu_custom_logout', '');
     }
-    $gluu_config = json_encode(array(
+    $gluu_oxd_id = update_query($db, 'gluu_oxd_id', '');
+    $gluu_config = array(
         "gluu_oxd_port" =>$_POST['gluu_oxd_port'],
         "admin_email" => $GLOBALS['current_user']->email1,
         "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
@@ -419,19 +497,30 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
         "gluu_client_id" => "",
         "gluu_client_secret" => "",
         "config_acr" => []
-    ));
-    $gluu_config = update_query($db, 'gluu_config', $gluu_config);
+    );
+
+    $gluu_config = update_query($db, 'gluu_config', json_encode($gluu_config));
+    if($_POST['gluu_users_can_register']==2){
+        $config = json_decode(select_query($db, 'gluu_config'),true);
+        array_push($config['config_scopes'],'permission');
+        $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+    }
     $gluu_provider         = select_query($db, 'gluu_provider');
     if (!empty($gluu_provider)) {
-        $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration');
+        $arrContextOptions=array(
+            "ssl"=>array(
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ),
+        );
+        $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
         $obj = json_decode($json);
         if(!empty($obj->userinfo_endpoint)){
             if(empty($obj->registration_endpoint)){
-                $_SESSION['message_success'] = "Please enter your client_id and client_secret.";
                 if(isset($_POST['gluu_client_id']) and !empty($_POST['gluu_client_id']) and
                     isset($_POST['gluu_client_secret']) and !empty($_POST['gluu_client_secret']) and !$obj->registration_endpoint){
-                    $gluu_config = json_encode(array(
-                        "oxd_host_port" => $_POST['gluu_oxd_port'],
+                    $gluu_config = array(
+                        "gluu_oxd_port" => $_POST['gluu_oxd_port'],
                         "admin_email" => $GLOBALS['current_user']->email1,
                         "gluu_client_id" => $_POST['gluu_client_id'],
                         "gluu_client_secret" => $_POST['gluu_client_secret'],
@@ -439,9 +528,13 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                         "post_logout_redirect_uri" => $base_url.'/gluu_logout.php?gluu_logout=Gluussos',
                         "config_scopes" => ["openid", "profile","email"],
                         "config_acr" => []
-                    ));
-                    $gluu_config = update_query($db, 'gluu_config', $gluu_config);
-
+                    );
+                    $gluu_config1 = update_query($db, 'gluu_config', json_encode($gluu_config));
+                    if($_POST['gluu_users_can_register']==2){
+                        $config = json_decode(select_query($db, 'gluu_config'),true);
+                        array_push($config['config_scopes'],'permission');
+                        $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                    }
                     $register_site = new Register_site();
                     $register_site->setRequestOpHost($gluu_provider);
                     $register_site->setRequestAcrValues($gluu_config['config_acr']);
@@ -460,8 +553,8 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                     }else{
                         $register_site->setRequestScope($gluu_config['config_scopes']);
                     }
-                    $register_site->setRequestClientId($gluu_config['gluu_client_id']);
-                    $register_site->setRequestClientSecret($gluu_config['gluu_client_secret']);
+                    $register_site->setRequestClientId($_POST['gluu_client_id']);
+                    $register_site->setRequestClientSecret($_POST['gluu_client_secret']);
                     $status = $register_site->request();
                     if ($status['message'] == 'invalid_op_host') {
                         $_SESSION['message_error'] = 'ERROR: OpenID Provider host is required if you don\'t provide it in oxd-default-site-config.json';
@@ -498,8 +591,9 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                     SugarApplication::redirect('index.php?module=Gluussos&action=generalEdit');
                     return;
                 }
-            }else{
-                $gluu_config = json_encode(array(
+            }
+            else{
+                $gluu_config = array(
                     "gluu_oxd_port" =>$_POST['gluu_oxd_port'],
                     "admin_email" => $GLOBALS['current_user']->email1,
                     "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
@@ -508,9 +602,13 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                     "gluu_client_id" => "",
                     "gluu_client_secret" => "",
                     "config_acr" => []
-                ));
-                $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
-
+                );
+                $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($gluu_config)),true);
+                if($_POST['gluu_users_can_register']==2){
+                    $config = json_decode(select_query($db, 'gluu_config'),true);
+                    array_push($config['config_scopes'],'permission');
+                    $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                }
                 $register_site = new Register_site();
                 $register_site->setRequestOpHost($gluu_provider);
                 $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -569,13 +667,13 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             }
         }
         else{
-            $_SESSION['message_error'] = 'Please enter correct URI of the OpenID Connect Provider';
+            $_SESSION['message_error'] = 'Please enter correct URI of the OpenID Provider';
             SugarApplication::redirect('index.php?module=Gluussos&action=generalEdit');
             return;
         }
     }
     else{
-        $gluu_config = json_encode(array(
+        $gluu_config = array(
             "gluu_oxd_port" =>$_POST['gluu_oxd_port'],
             "admin_email" => $GLOBALS['current_user']->email1,
             "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
@@ -584,8 +682,13 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             "gluu_client_id" => "",
             "gluu_client_secret" => "",
             "config_acr" => []
-        ));
-        $gluu_config = json_decode(update_query($db, 'gluu_config', $gluu_config),true);
+        );
+        $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($gluu_config)),true);
+        if($_POST['gluu_users_can_register']==2){
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }
         $register_site = new Register_site();
         $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
         $register_site->setRequestLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
@@ -615,7 +718,13 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
             $gluu_provider = $register_site->getResponseOpHost();
             $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-            $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration');
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
             $obj = json_decode($json);
             $register_site = new Register_site();
             $register_site->setRequestOpHost($gluu_provider);
@@ -677,36 +786,10 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
         }
     }
 }
-else if( isset( $_REQUEST['form_key_scope'] ) and strpos( $_REQUEST['form_key_scope'], 'openid_config_delete_scop' ) !== false ) {
-    $get_scopes =   json_decode(select_query($db, 'gluu_scopes'),true);
-    $up_cust_sc =  array();
-    foreach($get_scopes as $custom_scop){
-        if($custom_scop !=$_REQUEST['value_scope']){
-            array_push($up_cust_sc,$custom_scop);
-        }
-    }
-    $get_scopes = json_encode($up_cust_sc);
-    $get_scopes = update_query($db, 'gluu_scopes', $get_scopes);
-    $_SESSION['message_success'] = 'Scope deleted Successfully.';
-    SugarApplication::redirect('index.php?module=Gluussos&action=general');
-}
 else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_oxd_id_reset' )  !== false and !empty($_REQUEST['resetButton'])) {
     $db->query("DROP TABLE IF EXISTS `gluu_table`;");
     unset($_SESSION['openid_error']);
     $_SESSION['message_success'] = 'Configurations deleted Successfully.';
-    SugarApplication::redirect('index.php?module=Gluussos&action=general');
-}
-else if( isset( $_REQUEST['form_key_acr'] ) and strpos( $_REQUEST['form_key_acr'], 'openid_config_delete_custom_scripts' ) !== false ) {
-    $get_scopes              = json_decode(select_query($db, 'gluu_acr'),true);
-    $up_cust_sc =  array();
-    foreach($get_scopes as $custom_scop){
-        if($custom_scop !=$_REQUEST['value_script']){
-            array_push($up_cust_sc,$custom_scop);
-        }
-    }
-    $get_scopes = json_encode($up_cust_sc);
-    $gluu_acr = json_decode(update_query($db, 'gluu_acr', $get_scopes),true);
-    $_SESSION['message_success'] = 'Acr deleted Successfully.';
     SugarApplication::redirect('index.php?module=Gluussos&action=general');
 }
 else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'openid_config_page' ) !== false ) {
@@ -755,7 +838,7 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
     $gluu_oxd_id =   select_query($db, "gluu_oxd_id");
     $update_site_registration = new Update_site_registration();
     $update_site_registration->setRequestOxdId($gluu_oxd_id);
-    $update_site_registration->setRequestAcrValues($config_option['acr_values']);
+    $update_site_registration->setRequestAcrValues($gluu_config['acr_values']);
     $update_site_registration->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
     $update_site_registration->setRequestLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
     $update_site_registration->setRequestContacts([$gluu_config['admin_email']]);
@@ -770,27 +853,8 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
 
     $_SESSION['message_success'] = 'Your OpenID connect configuration has been saved.';
     $_SESSION['message_error'] = $message_error;
-    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+    SugarApplication::redirect('index.php?module=Gluussos&action=openidconfig');
     exit;
-}
-function file_newname($path, $filename){
-    if ($pos = strrpos($filename, '.')) {
-        $name = substr($filename, 0, $pos);
-        $ext = substr($filename, $pos);
-    } else {
-        $name = $filename;
-    }
-
-    $newpath = $path.'/'.$filename;
-    $newname = $filename;
-    $counter = 0;
-    while (file_exists($newpath)) {
-        $newname = $name .'_'. $counter . $ext;
-        $newpath = $path.'/'.$newname;
-        $counter++;
-    }
-
-    return $newname;
 }
 
 ?>

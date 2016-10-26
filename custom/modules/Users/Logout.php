@@ -15,7 +15,13 @@ if(isset($_SESSION['session_in_op'])){
 		require_once("modules/Gluussos/oxd-rp/Logout.php");
 		$db = DBManagerFactory::getInstance();
 		$gluu_provider = select_query($db, 'gluu_provider');
-		$json = file_get_contents($gluu_provider . '/.well-known/openid-configuration');
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		$json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
 		$obj = json_decode($json);
 
 		$oxd_id = select_query($db, 'gluu_oxd_id');
@@ -54,7 +60,7 @@ $GLOBALS['current_user']->call_custom_logic('before_logout');
 
 // submitted by Tim Scott from SugarCRM forums
 foreach($_SESSION as $key => $val) {
-	$_SESSION[$key] = ''; // cannot just overwrite session data, causes segfaults in some versions of PHP	
+	$_SESSION[$key] = ''; // cannot just overwrite session data, causes segfaults in some versions of PHP
 }
 if(isset($_COOKIE[session_name()])) {
 	setcookie(session_name(), '', time()-42000, '/',null,false,true);
