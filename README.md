@@ -40,11 +40,12 @@ In your SuiteCRM admin menu panel you should now see the OpenID Connect menu tab
 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d6.png) 
 
-1. New User Default Role: specify which role to give to new users upon registration.  
-2. URI of the OpenID Connect Provider: insert the URI of the OpenID Connect Provider.
-3. Custom URI after logout: custom URI after logout (for example "Thank you" page).
-4. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
-5. Click `Register` to continue.
+1. Automatically register any user with an account in the OpenID Provider. 
+2. New User Default Role: specify which role to give to new users upon registration.  
+3. URI of the OpenID Provider: insert the URI of the OpenID Connect Provider.
+4. Custom URI after logout: custom URI after logout (for example "Thank you" page).
+5. oxd port: enter the oxd-server port (you can find this in the `oxd-server/conf/oxd-conf.json` file).
+6. Click `Register` to continue.
 
 If your OpenID Provider supports dynamic registration, no additional steps are required in the general tab and you can navigate to the [OpenID Connect Configuration](#openid-connect-configuration) tab. 
 
@@ -52,7 +53,7 @@ If your OpenID Connect Provider doesn't support dynamic registration, you will n
 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d7.png)  
 
-To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/gluu.php?gluu_login=Gluussos`.
+To generate your `client_id` and `client_secret` use the redirect uri: `https://{site-base-url}/index.php?option=oxdOpenId`.
 
 > If you are using a Gluu server as your OpenID Provider, you can make sure everything is configured properly by logging into to your Gluu Server, navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
 
@@ -60,7 +61,7 @@ To generate your `client_id` and `client_secret` use the redirect uri: `https://
 
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d8.png) 
 
-#### Scopes
+#### User Scopes
 
 Scopes are groups of user attributes that are sent from the OP to the application during login and enrollment. By default, the requested scopes are `profile`, `email`, and `openid`.  
 
@@ -70,12 +71,13 @@ If you are using a Gluu server as your OpenID Provider, you can view all availab
 
 In the module interface you can enable, disable and delete scopes. 
 
-#### Manage Authentication
+#### Authentication
 
-##### Send user straight to OpenID Provider for authentication
+##### Bypass the local SuiteCRM login page and send users straight to the OP for authentication
 
 Check this box so that when users attempt to login they are sent straight to the OP, bypassing the local SuiteCRM login screen.
 When it is not checked, it will give proof the following screen.   
+
 ![upload](https://raw.githubusercontent.com/GluuFederation/gluu-sso-SuiteCRM-module/master/docu/d9.png) 
 
 ##### Select acr
@@ -86,8 +88,5 @@ Navigate to your OpenID Provider confiuration webpage `https://OpenID-Provider/.
 
 Note: If the `Select acr` value is `none`, users will be sent to pass the OP's default authentication mechanism.
 
-##### Add acr
-
-The module will detect the OPs supported ACR values if this information is published in the OP's discovery endpoint. However, if the OP does not publish supported ACR values, you may need to add them manually. 
 
 
