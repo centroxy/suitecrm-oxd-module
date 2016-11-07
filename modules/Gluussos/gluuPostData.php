@@ -8,6 +8,20 @@ ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
 $app->startSession();
+function gluu_is_port_working(){
+    $db = DBManagerFactory::getInstance();
+    $config_option = json_decode(select_query($db, 'gluu_config'),true);
+    $connection = @fsockopen('127.0.0.1', $config_option['gluu_oxd_port']);
+    if (is_resource($connection))
+    {
+        fclose($connection);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 function getBaseUrl()
 {
     // output: /myproject/index.php
@@ -70,7 +84,7 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }else{
         update_query($db, 'gluu_user_role', 0);
     }
-    if ($_POST['gluu_users_can_register']==1) {
+    if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
         if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
             update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
@@ -81,9 +95,20 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             update_query($db, 'gluu_new_role', json_encode(null));
         }
     }
-    elseif($_POST['gluu_users_can_register']==2){
+    if($_POST['gluu_users_can_register']==2){
         update_query($db, 'gluu_users_can_register', 2);
 
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
+    if($_POST['gluu_users_can_register']==3){
+        update_query($db, 'gluu_users_can_register', 3);
         if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
             update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
             $config = json_decode(select_query($db, 'gluu_config'),true);
@@ -168,6 +193,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                         array_push($config['config_scopes'],'permission');
                         $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
                     }
+                    if(!gluu_is_port_working()){
+                        $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                        SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                        return;
+                    }
                     $register_site = new Register_site();
                     $register_site->setRequestOpHost($gluu_provider);
                     $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -248,6 +278,21 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                     $config = json_decode(select_query($db, 'gluu_config'),true);
                     array_push($config['config_scopes'],'permission');
                     $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                }
+                if(!gluu_is_port_working()){
+                    $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                    return;
+                }
+                if(!gluu_is_port_working()){
+                    $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                    return;
+                }
+                if(!gluu_is_port_working()){
+                    $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                    return;
                 }
                 $register_site = new Register_site();
                 $register_site->setRequestOpHost($gluu_provider);
@@ -330,6 +375,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             array_push($config['config_scopes'],'permission');
             $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
         }
+        if(!gluu_is_port_working()){
+            $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+            SugarApplication::redirect('index.php?module=Gluussos&action=general');
+            return;
+        }
         $register_site = new Register_site();
         $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
         $register_site->setRequestLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
@@ -367,6 +417,11 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             );
             $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
             $obj = json_decode($json);
+            if(!gluu_is_port_working()){
+                $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                return;
+            }
             $register_site = new Register_site();
             $register_site->setRequestOpHost($gluu_provider);
             $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -434,7 +489,7 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
     }else{
         update_query($db, 'gluu_user_role', 0);
     }
-    if ($_POST['gluu_users_can_register']==1) {
+    if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
         if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
             update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
@@ -445,9 +500,20 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             update_query($db, 'gluu_new_role', json_encode(null));
         }
     }
-    elseif($_POST['gluu_users_can_register']==2){
+    if($_POST['gluu_users_can_register']==2){
         update_query($db, 'gluu_users_can_register', 2);
 
+        if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
+            update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
+            $config = json_decode(select_query($db, 'gluu_config'),true);
+            array_push($config['config_scopes'],'permission');
+            $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+        }else{
+            update_query($db, 'gluu_new_role', json_encode(null));
+        }
+    }
+    if($_POST['gluu_users_can_register']==3){
+        update_query($db, 'gluu_users_can_register', 3);
         if(!empty(array_values(array_filter($_POST['gluu_new_role'])))){
             update_query($db, 'gluu_new_role', json_encode(array_values(array_filter($_POST['gluu_new_role']))));
             $config = json_decode(select_query($db, 'gluu_config'),true);
@@ -535,6 +601,11 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                         array_push($config['config_scopes'],'permission');
                         $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
                     }
+                    if(!gluu_is_port_working()){
+                        $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                        SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                        return;
+                    }
                     $register_site = new Register_site();
                     $register_site->setRequestOpHost($gluu_provider);
                     $register_site->setRequestAcrValues($gluu_config['config_acr']);
@@ -608,6 +679,11 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                     $config = json_decode(select_query($db, 'gluu_config'),true);
                     array_push($config['config_scopes'],'permission');
                     $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
+                }
+                if(!gluu_is_port_working()){
+                    $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                    SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                    return;
                 }
                 $register_site = new Register_site();
                 $register_site->setRequestOpHost($gluu_provider);
@@ -689,6 +765,11 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             array_push($config['config_scopes'],'permission');
             $gluu_config = json_decode(update_query($db, 'gluu_config', json_encode($config)),true);
         }
+        if(!gluu_is_port_working()){
+            $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+            SugarApplication::redirect('index.php?module=Gluussos&action=general');
+            return;
+        }
         $register_site = new Register_site();
         $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
         $register_site->setRequestLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
@@ -726,6 +807,11 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             );
             $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
             $obj = json_decode($json);
+            if(!gluu_is_port_working()){
+                $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+                SugarApplication::redirect('index.php?module=Gluussos&action=general');
+                return;
+            }
             $register_site = new Register_site();
             $register_site->setRequestOpHost($gluu_provider);
             $register_site->setRequestAuthorizationRedirectUri($gluu_config['authorization_redirect_uri']);
@@ -836,6 +922,11 @@ else if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'open
     }
     $gluu_config =   json_decode(select_query($db, "gluu_config"),true);
     $gluu_oxd_id =   select_query($db, "gluu_oxd_id");
+    if(!gluu_is_port_working()){
+        $_SESSION['message_error'] = 'Can not connect to the oxd server. Please check the oxd-config.json file to make sure you have entered the correct port and the oxd server is operational.';
+        SugarApplication::redirect('index.php?module=Gluussos&action=general');
+        return;
+    }
     $update_site_registration = new Update_site_registration();
     $update_site_registration->setRequestOxdId($gluu_oxd_id);
     $update_site_registration->setRequestAcrValues($gluu_config['acr_values']);

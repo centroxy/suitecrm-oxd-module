@@ -227,7 +227,8 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
              header("Location: index.php?action=index&module=Home");
              exit;
-         }else{
+         }
+         else{
              $bool = true;
              $gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
              $gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
@@ -238,7 +239,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
                      $bool = True;
                  }
              }
-             if(!$bool){
+             if(!$bool or $gluu_users_can_register == 3){
                  echo "<script>
 					alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
 					location.href='index.php?action=index&module=Home';
