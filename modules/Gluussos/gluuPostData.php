@@ -81,8 +81,6 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }
     if($_POST['gluu_user_role']){
         update_query($db, 'gluu_user_role', $_POST['gluu_user_role']);
-    }else{
-        update_query($db, 'gluu_user_role', 0);
     }
     if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
@@ -486,8 +484,6 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
 
     if($_POST['gluu_user_role']){
         update_query($db, 'gluu_user_role', $_POST['gluu_user_role']);
-    }else{
-        update_query($db, 'gluu_user_role', 0);
     }
     if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
