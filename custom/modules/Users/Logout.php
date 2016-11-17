@@ -26,7 +26,7 @@ if(isset($_SESSION['session_in_op'])){
 
 		$oxd_id = select_query($db, 'gluu_oxd_id');
 		$gluu_config = json_decode(select_query($db, 'gluu_config'), true);
-		if (!empty($obj->end_session_endpoint)) {
+		if (!empty($obj->end_session_endpoint ) or $gluu_provider == 'https://accounts.google.com') {
 			if (!empty($_SESSION['user_oxd_id_token'])) {
 				if ($oxd_id && $_SESSION['user_oxd_id_token'] && $_SESSION['session_in_op']) {
 					$logout = new Logout();
