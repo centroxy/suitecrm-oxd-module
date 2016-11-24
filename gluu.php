@@ -2,15 +2,19 @@
 /**
  * Created by Vlad Karapetyan
  */
-require_once("modules/Gluussos/oxd-rp/Get_tokens_by_code.php");
-require_once("modules/Gluussos/oxd-rp/Get_user_info.php");
+if(!defined('sugarEntry'))define('sugarEntry', true);
 include ('include/MVC/preDispatch.php');
 $startTime = microtime(true);
 require_once('include/entryPoint.php');
 ob_start();
 require_once('include/MVC/SugarApplication.php');
 $app = new SugarApplication();
+
+require_once("modules/Gluussos/oxd-rp/Get_tokens_by_code.php");
+require_once("modules/Gluussos/oxd-rp/Get_user_info.php");
+
 $app->startSession();
+
 function getBaseUrl()
 {
     // output: /myproject/index.php
@@ -216,11 +220,25 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
     $ut = $GLOBALS['current_user']->getPreference('ut');
     include_once('modules/Users/authentication/AuthenticationController.php');
     $login = new AuthenticationController();
-    global $sugar_config;
     $user = new User();
      if($reg_email){
          $user->retrieve_by_email_address($reg_email);
          if($user->id){
+             $user->user_name = $reg_email;
+             $user->email1 = $reg_email;
+             $user->employee_status = 'Active';
+             $user->status = 'Active';
+             $user->last_name = $reg_last_name;
+             $user->first_name = $reg_first_name;
+             $user->phone_home = $reg_home_phone_number;
+             $user->phone_mobile = $reg_phone_mobile_number;
+             $user->address_street = $reg_street_address;
+             $user->address_city = $reg_city;
+             $user->address_country = $reg_country;
+             $user->address_postalcode = $reg_postal_code;
+             $user->external_auth_only = 0;
+             $user->save();
+
              $GLOBALS['current_user'] = $user;
              $_SESSION['authenticated_user_id'] = $user->id;
              $_SESSION['unique_key'] = $sugar_config['unique_key'];
@@ -242,7 +260,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              if(!$bool or $gluu_users_can_register == 3){
                  echo "<script>
 					alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
-					location.href='index.php?action=index&module=Home';
+					location.href='index.php?action=Login&module=Users';
 				 </script>";
                  exit;
              }
@@ -264,7 +282,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              $user->external_auth_only = 0;
              $user->save();
              $login->login($reg_email, $reg_email, $PARAMS = array());
-             header("Location: index.php?action=index&module=Home");
+             header("Location: index.php?action=Login&module=Users");
              exit;
          }
 
