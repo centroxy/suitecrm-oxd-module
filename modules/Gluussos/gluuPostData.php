@@ -81,6 +81,8 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
     }
     if($_POST['gluu_user_role']){
         update_query($db, 'gluu_user_role', $_POST['gluu_user_role']);
+    }else{
+        update_query($db, 'gluu_user_role', 0);
     }
     if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
@@ -243,8 +245,7 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                         $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
                         $gluu_provider = $register_site->getResponseOpHost();
                         $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-
-                        $_SESSION['message_success'] = 'Your settings are saved successfully.';
+                        $_SESSION['message_success'] = 'Your settings are saved successfully.<br/>Please add the following line to your config_override.php file <br/><pre>$sugar_config[\'http_referer\'][\'list\'][] = '.remove_http($_POST['gluu_provider']).';</pre>';
                         SugarApplication::redirect('index.php?module=Gluussos&action=general');
                         return;
                     } else {
@@ -337,8 +338,7 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
                     $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
                     $gluu_provider = $register_site->getResponseOpHost();
                     $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-
-                    $_SESSION['message_success'] = 'Your settings are saved successfully.';
+                    $_SESSION['message_success'] = 'Your settings are saved successfully.<br/>Please add the following line to your config_override.php file <br/><pre>$sugar_config[\'http_referer\'][\'list\'][] = '.remove_http($_POST['gluu_provider']).';</pre>';
                     SugarApplication::redirect('index.php?module=Gluussos&action=general');
                     return;
                 }
@@ -463,7 +463,7 @@ if( isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'general_r
             $gluu_oxd_id = $register_site->getResponseOxdId();
             if ($gluu_oxd_id) {
                 $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
-                $_SESSION['message_success'] = 'Your settings are saved successfully.';
+                $_SESSION['message_success'] = 'Your settings are saved successfully.<br/>Please add the following line to your config_override.php file <br/><pre>$sugar_config[\'http_referer\'][\'list\'][] = '.remove_http($_POST['gluu_provider']).';</pre>';
                 SugarApplication::redirect('index.php?module=Gluussos&action=general');
                 return;
             }
@@ -484,6 +484,8 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
 
     if($_POST['gluu_user_role']){
         update_query($db, 'gluu_user_role', $_POST['gluu_user_role']);
+    }else{
+        update_query($db, 'gluu_user_role', 0);
     }
     if($_POST['gluu_users_can_register']==1){
         update_query($db, 'gluu_users_can_register', $_POST['gluu_users_can_register']);
@@ -643,7 +645,6 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                         $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
                         $gluu_provider = $register_site->getResponseOpHost();
                         $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-
                         $_SESSION['message_success'] = 'Your settings are saved successfully.';
                         SugarApplication::redirect('index.php?module=Gluussos&action=general');
                         return;
@@ -726,7 +727,6 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
                     $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
                     $gluu_provider = $register_site->getResponseOpHost();
                     $gluu_provider = update_query($db, 'gluu_provider', $gluu_provider);
-
                     $_SESSION['message_success'] = 'Your settings are saved successfully.';
                     SugarApplication::redirect('index.php?module=Gluussos&action=general');
                     return;
@@ -851,7 +851,7 @@ else if (isset( $_REQUEST['form_key'] ) and strpos( $_REQUEST['form_key'], 'gene
             $gluu_oxd_id = $register_site->getResponseOxdId();
             if ($gluu_oxd_id) {
                 $gluu_oxd_id = update_query($db, 'gluu_oxd_id', $gluu_oxd_id);
-                $_SESSION['message_success'] = 'Your settings are saved successfully.';
+                $_SESSION['message_success'] = 'Your settings are saved successfully.<br/>Please add the following line to your config_override.php file <br/><pre>$sugar_config[\'http_referer\'][\'list\'][] = '.remove_http($_POST['gluu_provider']).';</pre>';
                 SugarApplication::redirect('index.php?module=Gluussos&action=general');
                 return;
             }
