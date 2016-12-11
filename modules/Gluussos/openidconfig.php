@@ -57,20 +57,15 @@ function update_query($db, $action, $value){
     }
 function getBaseUrl()
 {
-    // output: /myproject/index.php
     $currentPath = $_SERVER['PHP_SELF'];
-
-    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index )
     $pathInfo = pathinfo($currentPath);
-
-    // output: localhost
     $hostName = $_SERVER['HTTP_HOST'];
-
-    // output: http://
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-
-    // return: http://localhost/myproject/
-    return $protocol.$hostName.$pathInfo['dirname'];
+    if (strpos($pathInfo['dirname'], '\\') !== false) {
+        return $protocol . $hostName . "/";
+    } else {
+        return $protocol . $hostName . $pathInfo['dirname'] . "/";
+    }
 }
 $base_url  = getBaseUrl();
 $db = DBManagerFactory::getInstance();
@@ -100,8 +95,8 @@ if(!select_query($db, 'gluu_config')){
     $gluu_config = json_encode(array(
         "gluu_oxd_port" =>8099,
         "admin_email" => $GLOBALS['current_user']->email1,
-        "authorization_redirect_uri" => $base_url.'/gluu.php?gluu_login=Gluussos',
-        "post_logout_redirect_uri" => $base_url.'/gluu_logout.php?gluu_logout=Gluussos',
+        "authorization_redirect_uri" => $base_url.'gluu.php?gluu_login=Gluussos',
+        "post_logout_redirect_uri" => $base_url.'gluu_logout.php?gluu_logout=Gluussos',
         "config_scopes" => ["openid","profile","email"],
         "gluu_client_id" => "",
         "gluu_client_secret" => "",
