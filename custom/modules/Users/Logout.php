@@ -33,8 +33,8 @@ if(isset($_SESSION['session_in_op'])){
 					$logout->setRequestOxdId($oxd_id);
 					$logout->setRequestIdToken($_SESSION['user_oxd_id_token']);
 					$logout->setRequestPostLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
-					$logout->setRequestSessionState($_COOKIE['session_state']);
-					$logout->setRequestState($_COOKIE['state']);
+					$logout->setRequestSessionState($_SESSION['session_state']);
+					$logout->setRequestState($_SESSION['state']);
 					$logout->request();
 					unset($_SESSION['user_oxd_access_token']);
 					unset($_SESSION['user_oxd_id_token']);

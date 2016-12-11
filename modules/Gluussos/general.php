@@ -307,10 +307,10 @@ function gluu_is_oxd_registered(){
                                         </a>
                                     </h1>
                                     <div class="radio">
-                                        <p><label><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==1){ echo "checked";} ?> value="1" style="margin-right: 3px"> Automatically register any user with an account in the OpenID Provider</label></p>
+                                        <p><label><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==1){ echo "checked";} ?> value="1" style="margin-right: 3px"><b> Automatically register any user with an account in the OpenID Provider</b></label></p>
                                     </div>
                                     <div class="radio">
-                                        <p><label ><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register_1" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"> Only register users with the following role(s) in the OpenID Provider</label></p>
+                                        <p><label ><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register_1" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"> <b>Only register users with the following role(s) in the OpenID Provider</b></label></p>
                                         <div style="margin-left: 20px;">
                                             <div id="p_role" >
                                                 <?php $k=0;
@@ -320,7 +320,7 @@ function gluu_is_oxd_registered(){
                                                             $k++;
                                                             ?>
                                                             <p class="role_p" style="padding-top: 10px">
-                                                                <input  type="text" name="gluu_new_role[]" class="form-control" style="display: inline; width: 200px !important; "
+                                                                <input  type="text" name="gluu_new_role[]" required class="form-control" style="display: inline; width: 200px !important; "
                                                                         placeholder="Input role name"
                                                                         value="<?php echo $gluu_new_role; ?>"/>
                                                                 <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
@@ -329,7 +329,7 @@ function gluu_is_oxd_registered(){
                                                         } else {
                                                             ?>
                                                             <p class="role_p" style="padding-top: 10px">
-                                                                <input type="text" name="gluu_new_role[]" class="form-control" style="display: inline; width: 200px !important; "
+                                                                <input type="text" name="gluu_new_role[]" required class="form-control" style="display: inline; width: 200px !important; "
                                                                        placeholder="Input role name"
                                                                        value="<?php echo $gluu_new_role; ?>"/>
                                                                 <button type="button"  class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
@@ -340,7 +340,7 @@ function gluu_is_oxd_registered(){
                                                 }else{
                                                     ?>
                                                     <p class="role_p" style="padding-top: 10px">
-                                                        <input type="text" name="gluu_new_role[]" class="form-control" placeholder="Input role name" style="display: inline; width: 200px !important; " value=""/>
+                                                        <input type="text" name="gluu_new_role[]" required class="form-control" placeholder="Input role name" style="display: inline; width: 200px !important; " value=""/>
                                                         <button  type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
                                                     </p>
                                                     <?php
@@ -352,7 +352,7 @@ function gluu_is_oxd_registered(){
                                         <p>
                                             <label >
                                                 <input name="gluu_users_can_register" type="radio" id="gluu_users_can_register_2" <?php if($gluu_users_can_register==3){ echo "checked";} ?> value="3" style="margin-right: 3px">
-                                                Disable automatic registration
+                                                <b>Disable automatic registration</b>
                                             </label>
                                         </p>
                                     </div>
@@ -400,7 +400,7 @@ function gluu_is_oxd_registered(){
                                                     </td>
                                                 <?php }else{?>
                                                     <td style="width: 250px">
-                                                        <div><input type="submit" name="submit" value="Register" style="width: 120px; float: left;" class="button button-primary button-large"/></div>
+                                                        <div><input type="submit" name="submit" value="Register" style="width: 120px; float: right;" class="button button-primary button-large"/></div>
                                                     </td>
                                                     <td>
                                                     </td>
@@ -492,10 +492,10 @@ function gluu_is_oxd_registered(){
                                     </a>
                                 </h1>
                                 <div>
-                                    <p><label><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==1){ echo "checked";} ?> value="1" style="margin-right: 3px"> Automatically register any user with an account in the OpenID Provider</label></p>
+                                    <p><label><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==1){ echo "checked";} ?> value="1" style="margin-right: 3px"><b> Automatically register any user with an account in the OpenID Provider</b></label></p>
                                 </div>
                                 <div>
-                                    <p><label ><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"> Only register users with the following role(s) in the OpenID Provider</label></p>
+                                    <p><label ><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"><b> Only register users with the following role(s) in the OpenID Provider</b></label></p>
                                     <div style="margin-left: 20px;">
                                         <div id="p_role_disabled">
                                             <?php $k=0;
@@ -534,7 +534,7 @@ function gluu_is_oxd_registered(){
                                     </div>
                                 </div>
                                 <div>
-                                    <p><label><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register_2" <?php if($gluu_users_can_register==3){ echo "checked";} ?> value="3" style="margin-right: 3px">Disable automatic registration</label></p>
+                                    <p><label><input name="gluu_users_can_register" disabled type="radio" id="gluu_users_can_register_2" <?php if($gluu_users_can_register==3){ echo "checked";} ?> value="3" style="margin-right: 3px"><b>Disable automatic registration</b></label></p>
                                 </div>
                                 <table class="table">
                                     <tr>
@@ -561,10 +561,11 @@ function gluu_is_oxd_registered(){
                                     </tr>
                                     <tr>
                                         <td style="width: 250px">
-                                            <a class="button button-primary button-large" style="text-decoration: none;text-align:center; float: left; width: 100px;background-color: blue" href="index.php?module=Gluussos&action=generalEdit">Edit</a>
-                                            <input type="submit" onclick="return confirm('Are you sure that you want to remove this OpenID Connect provider? Users will no longer be able to authenticate against this OP.')" name="resetButton" value="Delete" style="background-color:red;margin-left:20px;text-decoration: none;text-align:center; float: left; width: 100px;" class="button button-danger button-large"/>
+                                            <a class="button button-primary button-large" style="float:right;text-decoration: none;text-align:center; width: 120px;background-color: blue" href="index.php?module=Gluussos&action=generalEdit">Edit</a>
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            <input type="submit" onclick="return confirm('Are you sure that you want to remove this OpenID Connect provider? Users will no longer be able to authenticate against this OP.')" name="resetButton" value="Delete" style="background-color:red;text-decoration: none;text-align:center; float: left; width: 120px;" class="button button-danger button-large"/>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

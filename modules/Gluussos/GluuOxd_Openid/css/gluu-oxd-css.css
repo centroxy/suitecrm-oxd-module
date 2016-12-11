@@ -617,4 +617,6 @@ td, th {
 .sc img {
     vertical-align: middle
 }
-
+td{
+		color: black !important;
+}

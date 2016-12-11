@@ -224,8 +224,6 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
      if($reg_email){
          $user->retrieve_by_email_address($reg_email);
          if($user->id){
-             $user->user_name = $reg_email;
-             $user->email1 = $reg_email;
              $user->employee_status = 'Active';
              $user->status = 'Active';
              $user->last_name = $reg_last_name;
@@ -260,7 +258,7 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              if(!$bool or $gluu_users_can_register == 3){
                  echo "<script>
 					alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
-					location.href='index.php?action=Login&module=Users';
+					window.location.href='" . gluu_sso_doing_logout($get_tokens_by_code->getResponseIdToken(), $_REQUEST['session_state'], $_REQUEST['state']) . "';
 				 </script>";
                  exit;
              }
@@ -322,6 +320,47 @@ function login_url($prompt){
 
     return $get_authorization_url->getResponseAuthorizationUrl();
 }
+    
+/**
+ * Doing logout is something is wrong
+ */
+function gluu_sso_doing_logout($user_oxd_id_token, $session_states, $state)
+{
+    @session_start();
+    require_once("modules/Gluussos/oxd-rp/Logout.php");
+    $db = DBManagerFactory::getInstance();
+    $gluu_provider = select_query($db, 'gluu_provider');
+    $arrContextOptions=array(
+      "ssl"=>array(
+        "verify_peer"=>false,
+        "verify_peer_name"=>false,
+      ),
+    );
+    $json = file_get_contents($gluu_provider.'/.well-known/openid-configuration', false, stream_context_create($arrContextOptions));
+    $obj = json_decode($json);
 
-
+    $oxd_id = select_query($db, 'gluu_oxd_id');
+    $gluu_config = json_decode(select_query($db, 'gluu_config'), true);
+    if (!empty($obj->end_session_endpoint ) or $gluu_provider == 'https://accounts.google.com') {
+        if (!empty($_SESSION['user_oxd_id_token'])) {
+            if ($oxd_id && $_SESSION['user_oxd_id_token'] && $_SESSION['session_in_op']) {
+                $logout = new Logout();
+                $logout->setRequestOxdId($oxd_id);
+                $logout->setRequestIdToken($_SESSION['user_oxd_id_token']);
+                $logout->setRequestPostLogoutRedirectUri($gluu_config['post_logout_redirect_uri']);
+                $logout->setRequestSessionState($_SESSION['session_state']);
+                $logout->setRequestState($_SESSION['state']);
+                $logout->request();
+                unset($_SESSION['user_oxd_access_token']);
+                unset($_SESSION['user_oxd_id_token']);
+                unset($_SESSION['session_state']);
+                unset($_SESSION['state']);
+                unset($_SESSION['session_in_op']);
+                return $logout->getResponseObject()->data->uri;
+            }
+        }
+    }
+    
+    return getBaseUrl();
+}
 

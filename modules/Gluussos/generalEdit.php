@@ -276,7 +276,7 @@ function gluu_is_oxd_registered(){
                                                     $k++;
                                                     ?>
                                                     <p class="role_p" style="padding-top: 10px">
-                                                        <input  type="text" name="gluu_new_role[]"  class="form-control" style="display: inline; width: 200px !important; "
+                                                        <input  type="text" name="gluu_new_role[]" required  class="form-control" style="display: inline; width: 200px !important; "
                                                                 placeholder="Input role name"
                                                                 value="<?php echo $gluu_new_role; ?>"/>
                                                         <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
@@ -285,7 +285,7 @@ function gluu_is_oxd_registered(){
                                                 } else {
                                                     ?>
                                                     <p class="role_p" style="padding-top: 10px">
-                                                        <input type="text" name="gluu_new_role[]"
+                                                        <input type="text" name="gluu_new_role[]" required
                                                                placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; "
                                                                value="<?php echo $gluu_new_role; ?>"/>
                                                         <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
@@ -296,7 +296,7 @@ function gluu_is_oxd_registered(){
                                         }else{
                                             ?>
                                             <p class="role_p" style="padding-top: 10px">
-                                                <input type="text" name="gluu_new_role[]" placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; " value=""/>
+                                                <input type="text" name="gluu_new_role[]" required placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; " value=""/>
                                                 <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
                                             </p>
                                             <?php
@@ -332,10 +332,10 @@ function gluu_is_oxd_registered(){
                                 </tr>
                                 <tr>
                                     <td  style="width: 250px">
-                                        <input type="submit" name="saveButton" value="Save" style="text-decoration: none;text-align:center; float: left; width: 100px;" class="button button-primary button-large"/>
-                                        <a class="button button-primary button-large" onclick="edit_cancel_function()" style="background-color:red;margin-left:20px;text-align:center;float: left; width: 100px;" href="index.php?module=Gluussos&action=general">Cancel</a>
+                                        <input type="submit" name="saveButton" value="Save" style="text-decoration: none;text-align:center; float: right; width: 120px;" class="button button-primary button-large"/>
                                     </td>
                                     <td>
+                                        <a class="button button-primary button-large" onclick="edit_cancel_function()" style="background-color:red;text-align:center;float: left; width: 120px;" href="index.php?module=Gluussos&action=general">Cancel</a>
                                     </td>
                                 </tr>
                             </table>
