@@ -211,7 +211,25 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
         $world = str_replace("[","",$get_user_info_array->permission[0]);
         $reg_user_permission = str_replace("]","",$world);
     }
-
+	
+		$bool = false;
+		$gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
+		$gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
+		if($gluu_users_can_register == 2 and !empty($gluu_new_roles)) {
+			foreach ($gluu_new_roles as $gluu_new_role) {
+				if (strstr($reg_user_permission, $gluu_new_role)) {
+					$bool = true;
+				}
+			}
+			if(!$bool){
+				echo "<script>
+											alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
+											window.location.href='" . gluu_sso_doing_logout($get_tokens_by_code->getResponseIdToken(), $_REQUEST['session_state'], $_REQUEST['state']) . "';
+										 </script>";
+				exit;
+			}
+		}
+		
     $ut = $GLOBALS['current_user']->getPreference('ut');
     include_once('modules/Users/authentication/AuthenticationController.php');
     $login = new AuthenticationController();
@@ -240,23 +258,13 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              exit;
          }
          else{
-             $bool = true;
-             $gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
-             $gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
-             if($gluu_users_can_register == 2 and !empty($gluu_new_roles)){
-                 if (!in_array($reg_user_permission, $gluu_new_roles)) {
-                     $bool = false;
-                 }else{
-                     $bool = True;
-                 }
-             }
-             if(!$bool or $gluu_users_can_register == 3){
-                 echo "<script>
-					alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
-					window.location.href='" . gluu_sso_doing_logout($get_tokens_by_code->getResponseIdToken(), $_REQUEST['session_state'], $_REQUEST['state']) . "';
-				 </script>";
-                 exit;
-             }
+		         if($gluu_users_can_register == 3){
+			         echo "<script>
+												alert('You are not authorized for an account on this application. If you think this is an error, please contact your OpenID Connect Provider (OP) admin.');
+												window.location.href='" . gluu_sso_doing_logout($get_tokens_by_code->getResponseIdToken(), $_REQUEST['session_state'], $_REQUEST['state']) . "';
+											 </script>";
+			         exit;
+		         }
              $user_hash = User::getPasswordHash($reg_email);
              $user->user_name = $reg_email;
              $user->email1 = $reg_email;
@@ -277,11 +285,9 @@ if( isset( $_REQUEST['gluu_login'] ) and strpos( $_REQUEST['gluu_login'], 'Gluus
              $login->login($reg_email, $reg_email, $PARAMS = array());
              header("Location: index.php?action=Login&module=Users");
              exit;
-         }
+	         }
 
     }
-
-
 }
 
 
