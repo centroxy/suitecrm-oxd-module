@@ -15,7 +15,7 @@ In order to use the SuiteCRM module you will need to have a standard OP (like Go
 ## Installation
  
 ### Download
-[Github source](https://github.com/GluuFederation/gluu-sso-SugarCRM-module/blob/master/gluu-sso-SugarCRM-module.zip?raw=true)
+[Github source](https://github.com/GluuFederation/suitecrm-oxd-module/blob/master/gluu-sso-SuiteCRM-module.zip?raw=true)
 
 1. Open menu tab Admin and click on ```Module loader``` button
 ![Manager](https://raw.githubusercontent.com/GluuFederation/suitecrm-oxd-module/master/docu/1.png) 
