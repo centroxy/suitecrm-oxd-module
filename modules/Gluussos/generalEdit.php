@@ -1,51 +1,51 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-if(!gluu_is_oxd_registered()){
-    SugarApplication::redirect('index.php?module=Gluussos&action=general');
-}
-function getBaseUrl()
-{
-    $currentPath = $_SERVER['PHP_SELF'];
-    $pathInfo = pathinfo($currentPath);
-    $hostName = $_SERVER['HTTP_HOST'];
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    if (strpos($pathInfo['dirname'], '\\') !== false) {
-        return $protocol . $hostName . "/";
-    } else {
-        return $protocol . $hostName . $pathInfo['dirname'] . "/";
+    if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+    if(!gluu_is_oxd_registered()){
+        SugarApplication::redirect('index.php?module=Gluussos&action=general');
     }
-}
-$base_url  = getBaseUrl();
-
-$db = DBManagerFactory::getInstance();
-
-function select_query($db, $action){
-    $result = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '$action'"))["gluu_value"];
-    return $result;
-}
-
-$get_scopes            = json_decode(select_query($db, 'gluu_scopes'),true);
-$gluu_config           = json_decode(select_query($db, 'gluu_config'),true);
-$gluu_acr              = json_decode(select_query($db, 'gluu_acr'),true);
-$gluu_auth_type        = select_query($db, 'gluu_auth_type');
-$gluu_send_user_check  = select_query($db, 'gluu_send_user_check');
-$gluu_provider         = select_query($db, 'gluu_provider');
-$gluu_user_role        = select_query($db, 'gluu_user_role');
-$gluu_custom_logout    = select_query($db, 'gluu_custom_logout');
-$gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
-$gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
-function gluu_is_oxd_registered(){
-    $db = DBManagerFactory::getInstance();
-    if(select_query($db, 'gluu_oxd_id')){
-        $oxd_id = select_query($db, 'gluu_oxd_id');
-        if(!$oxd_id ) {
-            return 0;
+    function getBaseUrl()
+    {
+        $currentPath = $_SERVER['PHP_SELF'];
+        $pathInfo = pathinfo($currentPath);
+        $hostName = $_SERVER['HTTP_HOST'];
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        if (strpos($pathInfo['dirname'], '\\') !== false) {
+            return $protocol . $hostName . "/";
         } else {
-            return $oxd_id;
+            return $protocol . $hostName . $pathInfo['dirname'] . "/";
         }
     }
+    $base_url  = getBaseUrl();
 
-}
+    $db = DBManagerFactory::getInstance();
+
+    function select_query($db, $action){
+        $result = $db->fetchRow($db->query("SELECT `gluu_value` FROM `gluu_table` WHERE `gluu_action` LIKE '$action'"))["gluu_value"];
+        return $result;
+    }
+
+    $get_scopes            = json_decode(select_query($db, 'gluu_scopes'),true);
+    $gluu_config           = json_decode(select_query($db, 'gluu_config'),true);
+    $gluu_acr              = json_decode(select_query($db, 'gluu_acr'),true);
+    $gluu_auth_type        = select_query($db, 'gluu_auth_type');
+    $gluu_send_user_check  = select_query($db, 'gluu_send_user_check');
+    $gluu_provider         = select_query($db, 'gluu_provider');
+    $gluu_user_role        = select_query($db, 'gluu_user_role');
+    $gluu_custom_logout    = select_query($db, 'gluu_custom_logout');
+    $gluu_new_roles              = json_decode(select_query($db, 'gluu_new_role'));
+    $gluu_users_can_register    = select_query($db, 'gluu_users_can_register');
+    function gluu_is_oxd_registered(){
+        $db = DBManagerFactory::getInstance();
+        if(select_query($db, 'gluu_oxd_id')){
+            $oxd_id = select_query($db, 'gluu_oxd_id');
+            if(!$oxd_id ) {
+                return 0;
+            } else {
+                return $oxd_id;
+            }
+        }
+
+    }
 ?>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -252,7 +252,7 @@ function gluu_is_oxd_registered(){
                             </table>
                         </div>
                         <div style="padding-left: 10px;">
-                            <h1 style="font-weight:bold;padding-left: 10px;padding-bottom: 20px; border-bottom: 2px solid black; width: 60%;">Enrollment
+                            <h1 style="font-weight:bold;padding-left: 10px;padding-bottom: 20px; border-bottom: 2px solid black; width: 60%;">Enrollment and Access Management
                                 <a data-toggle="tooltip" class="tooltipLink" data-original-title="Choose whether to register new users when they login at an external identity provider. If you disable automatic registration, new users will need to be manually created">
                                     <span class="glyphicon glyphicon-info-sign"></span>
                                 </a>
@@ -261,41 +261,41 @@ function gluu_is_oxd_registered(){
                                 <p><label><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==1){ echo "checked";} ?> value="1" style="margin-right: 3px"> Automatically register any user with an account in the OpenID Provider</label></p>
                             </div>
                             <div style="padding-left: 10px;">
-                                <p><label ><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"> Only register users with the following role(s) in the OpenID Provider</label></p>
+                                <p><label ><input name="gluu_users_can_register" type="radio" id="gluu_users_can_register" <?php if($gluu_users_can_register==2){ echo "checked";} ?> value="2" style="margin-right: 3px"> Only register and allow ongoing access to users with one or more of the following roles in the OpenID Provider</label></p>
                                 <div style="margin-left: 20px;">
                                     <div id="p_role">
                                         <?php $k=0;
-                                        if(!empty($gluu_new_roles)) {
-                                            foreach ($gluu_new_roles as $gluu_new_role) {
-                                                if (!$k) {
-                                                    $k++;
-                                                    ?>
-                                                    <p class="role_p" style="padding-top: 10px">
-                                                        <input  type="text" name="gluu_new_role[]" required  class="form-control" style="display: inline; width: 200px !important; "
-                                                                placeholder="Input role name"
-                                                                value="<?php echo $gluu_new_role; ?>"/>
-                                                        <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
-                                                    </p>
-                                                    <?php
-                                                } else {
-                                                    ?>
-                                                    <p class="role_p" style="padding-top: 10px">
-                                                        <input type="text" name="gluu_new_role[]" required
-                                                               placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; "
-                                                               value="<?php echo $gluu_new_role; ?>"/>
-                                                        <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
-                                                        <button type="button" class="btn btn-xs remrole"><span class="glyphicon glyphicon-minus"></span></button>
-                                                    </p>
-                                                <?php }
-                                            }
-                                        }else{
-                                            ?>
-                                            <p class="role_p" style="padding-top: 10px">
-                                                <input type="text" name="gluu_new_role[]" required placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; " value=""/>
-                                                <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
-                                            </p>
-                                            <?php
-                                        }?>
+                                            if(!empty($gluu_new_roles)) {
+                                                foreach ($gluu_new_roles as $gluu_new_role) {
+                                                    if (!$k) {
+                                                        $k++;
+                                                        ?>
+                                                        <p class="role_p" style="padding-top: 10px">
+                                                            <input  type="text" name="gluu_new_role[]" required  class="form-control" style="display: inline; width: 200px !important; "
+                                                                    placeholder="Input role name"
+                                                                    value="<?php echo $gluu_new_role; ?>"/>
+                                                            <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
+                                                        </p>
+                                                        <?php
+                                                    } else {
+                                                        ?>
+                                                        <p class="role_p" style="padding-top: 10px">
+                                                            <input type="text" name="gluu_new_role[]" required
+                                                                   placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; "
+                                                                   value="<?php echo $gluu_new_role; ?>"/>
+                                                            <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
+                                                            <button type="button" class="btn btn-xs remrole"><span class="glyphicon glyphicon-minus"></span></button>
+                                                        </p>
+                                                    <?php }
+                                                }
+                                            }else{
+                                                ?>
+                                                <p class="role_p" style="padding-top: 10px">
+                                                    <input type="text" name="gluu_new_role[]" required placeholder="Input role name"  class="form-control" style="display: inline; width: 200px !important; " value=""/>
+                                                    <button type="button" class="btn btn-xs add_new_role" onclick="test_add()"><span class="glyphicon glyphicon-plus"></span></button>
+                                                </p>
+                                                <?php
+                                            }?>
                                     </div>
                                 </div>
                             </div>
@@ -307,19 +307,19 @@ function gluu_is_oxd_registered(){
                                     <td  style="width: 250px"><label for="UserType"><b>New User Default Role:</b></label></td>
                                     <td>
                                         <?php
-                                        $user_types = array(
-                                            array('name'=>'Regular User', 'status'=>'0'),
-                                            array('name'=>'System Administrator User', 'status'=>'1')
-                                        );
+                                            $user_types = array(
+                                                    array('name'=>'Regular User', 'status'=>'0'),
+                                                    array('name'=>'System Administrator User', 'status'=>'1')
+                                            );
                                         ?>
                                         <div class="form-group" style="margin-bottom: 0px !important;">
                                             <select id="UserType" class="form-control" name="gluu_user_role">
                                                 <?php
-                                                foreach($user_types as $user_type){
-                                                    ?>
-                                                    <option <?php if($user_type['status'] == $gluu_user_role) echo 'selected'; ?> value="<?php echo $user_type['status'];?>"><?php echo $user_type['name'];?></option>
-                                                    <?php
-                                                }
+                                                    foreach($user_types as $user_type){
+                                                        ?>
+                                                        <option <?php if($user_type['status'] == $gluu_user_role) echo 'selected'; ?> value="<?php echo $user_type['status'];?>"><?php echo $user_type['name'];?></option>
+                                                        <?php
+                                                    }
                                                 ?>
                                             </select>
                                         </div>
