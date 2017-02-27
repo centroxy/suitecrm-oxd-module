@@ -7,6 +7,8 @@ Gluu's OpenID Connect Single Sign-On (SSO) SuiteCRM module will enable you to au
 ## Requirements
 In order to use the SuiteCRM module you will need to have a standard OP (like Google or a Gluu Server) and the oxd server.
 
+* Compatibility : 6.5 <= 7.6 versions
+
 * [Gluu Server Installation Guide](https://www.gluu.org/docs/deployment/).
 
 * [oxd Server Installation Guide](https://oxd.gluu.org/docs/oxdserver/install/)
@@ -56,6 +58,13 @@ To generate your `client_id` and `client_secret` use the redirect uri: `https://
 
 > If you are using a Gluu server as your OpenID Provider, you can make sure everything is configured properly by logging into to your Gluu Server, navigate to the OpenID Connect > Clients page. Search for your `oxd id`.
 
+### Attention
+
+Please add the following lines to your config_override.php file.
+ 
+`$sugar_config['http_referer']['list'][] = your-openid-provider.uri`;
+`$sugar_config['http_referer']['actions'] =array('index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login', 'SupportPortal', 'Wizard', 'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login', 'SupportPortal', 'SetTimezone' );`
+
 #### Enrollment and Access Management
 
 Navigate to your Gluu Server admin GUI. Click the `Users` tab in the left hand navigation menu. Select `Manage People`. Find the person(s) who should have access. Click their user entry. Add the `User Permission` attribute to the person and specify the same value as in the module. For instance, if in the module you have limit enrollment to user(s) with role = `suitecrm`, then you should also have `User Permission` = `suitecrm` in the user entry. Update the user record, and now they are ready for enrollment at your SuiteCRM site. 
@@ -70,7 +79,7 @@ Scopes are groups of user attributes that are sent from the OP to the applicatio
 
 To view your OP's available scopes, in a web browser navigate to `https://OpenID-Provider/.well-known/openid-configuration`. For example, here are the scopes you can request if you're using [Google as your OP](https://accounts.google.com/.well-known/openid-configuration). 
 
-If you are using a Gluu server as your OpenID Provider, you can view all available scopes by navigating to the OpenID Connect > Scopes intefrace. 
+If you are using a Gluu server as your OpenID Provider, you can view all available scopes by navigating to the OpenID Connect > Scopes interface. 
 
 In the module interface you can enable, disable and delete scopes. 
 
@@ -89,7 +98,7 @@ When it is not checked, it will give proof the following screen.
 
 To signal which type of authentication should be used, an OpenID Connect client may request a specific authentication context class reference value (a.k.a. "acr"). The authentication options available will depend on which types of mechanisms the OP has been configured to support. The Gluu Server supports the following authentication mechanisms out-of-the-box: username/password (basic), Duo Security, Super Gluu, and U2F tokens, like Yubikey.  
 
-Navigate to your OpenID Provider confiuration webpage `https://OpenID-Provider/.well-known/openid-configuration` to see supported `acr_values`. In the `Select acr` section of the module page, choose the mechanism which you want for authentication. 
+Navigate to your OpenID Provider configuration webpage `https://OpenID-Provider/.well-known/openid-configuration` to see supported `acr_values`. In the `Select acr` section of the module page, choose the mechanism which you want for authentication. 
 
 Note: If the `Select acr` value is `none`, users will be sent to pass the OP's default authentication mechanism.
 
