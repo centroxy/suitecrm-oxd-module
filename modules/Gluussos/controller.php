@@ -7,11 +7,11 @@
 	 *
 	 * @package	  OpenID Connect SSO Module by Gluu
 	 * @category  Module for SuiteCrm
-	 * @version   3.0.0
+	 * @version   3.0.1
 	 *
 	 * @author    Gluu Inc.          : <https://gluu.org>
 	 * @link      Oxd site           : <https://oxd.gluu.org>
-	 * @link      Documentation      : <https://oxd.gluu.org/docs/plugin/sugarcrm/>
+	 * @link      Documentation      : <https://gluu.org/docs/oxd/3.0.1/plugin/suitecrm/>
 	 * @director  Mike Schwartz      : <mike@gluu.org>
 	 * @support   Support email      : <support@gluu.org>
 	 * @developer Volodya Karapetyan : <https://github.com/karapetyan88> <mr.karapetyan88@gmail.com>

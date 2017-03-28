@@ -7,11 +7,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 *
 	 * @package	  OpenID Connect SSO Module by Gluu
 	 * @category  Module for SuiteCrm
-	 * @version   3.0.0
+	 * @version   3.0.1
 	 *
 	 * @author    Gluu Inc.          : <https://gluu.org>
 	 * @link      Oxd site           : <https://oxd.gluu.org>
-	 * @link      Documentation      : <https://oxd.gluu.org/docs/plugin/sugarcrm/>
+	 * @link      Documentation      : <https://gluu.org/docs/oxd/3.0.1/plugin/suitecrm/>
 	 * @director  Mike Schwartz      : <mike@gluu.org>
 	 * @support   Support email      : <support@gluu.org>
 	 * @developer Volodya Karapetyan : <https://github.com/karapetyan88> <mr.karapetyan88@gmail.com>
@@ -265,7 +265,7 @@ function gluu_is_oxd_registered(){
             <?php }else {?>
                 <li id="social-sharing-setup"><a href="index.php?module=Gluussos&action=openidconfig">OpenID Connect Configuration</a></li>
             <?php }?>
-            <li id=""><a data-method="#configopenid" href="https://oxd.gluu.org/docs/plugin/suitecrm/" target="_blank">Documentation</a></li>
+            <li id=""><a data-method="#configopenid" href="https://gluu.org/docs/oxd/3.0.1/plugin/suitecrm/" target="_blank">Documentation</a></li>
         </ul>
         <div class="container-page">
             <!-- General -->
